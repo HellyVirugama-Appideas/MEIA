@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+        <title>Breathing Sessions | <%= title %>
+        </title>
+
+        <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css"
+            href="/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="/app-assets/css/pages/data-tables.css">
+
+        <style>
+            table tr td,
+            th {
+                text-align: center;
+            }
+
+            .title-cell {
+                max-width: 220px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                text-align: left !important;
+            }
+
+            tr.breathing-row {
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            tr.breathing-row:hover {
+                background-color: #f5f5f5 !important;
+            }
+
+            td.actions-column {
+                cursor: default;
+            }
+
+            td.actions-column a {
+                pointer-events: auto !important;
+            }
+        </style>
+</head>
+
+<body
+    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+    data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+        <div id="main">
+            <div class="row">
+                <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col s12 m6 l6">
+                                <h6 class="breadcrumbs-title"><span>Breathing Sessions (Cosmic Inhale)</span></h6>
+                            </div>
+                            <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                                <ol class="breadcrumbs mb-0">
+                                    <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Breathing Sessions</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="breadcrumbs-wrapper" style="background-color: white;">
+                <div class="container">
+                    <div class="row">
+                        <%- include('messages', { messages: messages }) %>
+                            <div class="col s12 right-align-md">
+                                <a href="/admin/content/breathing/add"
+                                    class="btn pull-right btn-add btn-breadcrumbs white-text">Add Session</a>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12">
+                <div class="container">
+                    <div class="section section-data-tables">
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="row">
+                                            <div class="col s12 overflow">
+                                                <table id="page-length-option" class="display">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Sr</th>
+                                                            <th>Title</th>
+                                                            <th>Subtitle</th>
+                                                            <th>Cycles</th>
+                                                            <th>Inhale/Hold/Exhale</th>
+                                                            <th>Active</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% if(sessions && sessions.length> 0){ %>
+                                                            <% sessions.forEach((s,index)=> { %>
+                                                                <tr class="breathing-row"
+                                                                    data-href="/admin/content/breathing/edit/<%= s._id %>">
+                                                                    <td>
+                                                                        <%= index + 1 + ((typeof pagination
+                                                                            !=='undefined' && pagination?.page) ?
+                                                                            (pagination.page - 1) * (pagination.limit ||
+                                                                            25) : 0) %>
+                                                                    </td>
+                                                                    <td class="title-cell" title="<%= s.title %>">
+                                                                        <%= s.title %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= s.subtitle %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= s.totalCycles %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= s.inhaleSeconds %>s / <%= s.holdSeconds %>s
+                                                                                / <%= s.exhaleSeconds %>s
+                                                                    </td>
+                                                                    <td><span
+                                                                            class="badge <%= s.isActive ? 'green' : 'red' %> white-text">
+                                                                            <%= s.isActive ? 'Yes' : 'No' %>
+                                                                        </span></td>
+                                                                    <td class="actions-column">
+                                                                        <a href="/admin/content/breathing/edit/<%= s._id %>"
+                                                                            class="waves-effect waves-light accent-2 btn-edit"
+                                                                            title="Edit">
+                                                                            <i class="material-icons">edit</i>
+                                                                        </a>
+                                                                        &nbsp;&nbsp;
+                                                                        <a href="/admin/content/breathing/delete/<%= s._id %>"
+                                                                            class="btn-floating waves-effect waves-light red"
+                                                                            title="Delete"
+                                                                            onclick="return confirm('Delete this session?');">
+                                                                            <i class="material-icons">delete</i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                                    <% } else { %>
+                                                                        <tr>
+                                                                            <td colspan="6"
+                                                                                class="center-align grey-text">No
+                                                                                breathing sessions added yet.</td>
+                                                                        </tr>
+                                                                        <% } %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('_layouts/commonJs') %>
+
+            <script src="/app-assets/vendors/data-tables/js/jquery.dataTables.min.js"></script>
+            <script src="/app-assets/js/scripts/data-tables.js"></script>
+
+</body>
+
+</html>

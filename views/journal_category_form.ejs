@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/journal">Journal Categories</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="card-content">
+                    <form method="POST"
+                          action="<%= category ? '/admin/journal/' + category._id : '/admin/journal' %>">
+
+                        <div class="input-field col s12">
+                            <input id="name" name="name" type="text" value="<%= category ? category.name : '' %>"
+                                placeholder="e.g. Mercury in Retrograde" required>
+                            <label for="name" class="active">Category Name</label>
+                        </div>
+
+                        <div class="input-field col s12 m6">
+                            <input id="order" name="order" type="number" value="<%= category ? category.order : 0 %>">
+                            <label for="order" class="active">Display Order</label>
+                        </div>
+
+                        <div class="input-field col s12 m6">
+                            <select name="isActive">
+                                <option value="true" <%= (!category || category.isActive) ? 'selected' : '' %>>Active</option>
+                                <option value="false" <%= (category && !category.isActive) ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <label>Status</label>
+                        </div>
+
+                        <div class="col s12 right-align">
+                            <button type="submit" class="btn"><%= category ? 'Update' : 'Create' %></button>
+                            <a href="/admin/journal" class="btn red">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>
+        $(document).ready(function () {
+            $('select').formSelect();
+            M.updateTextFields();
+        });
+    </script>
+</body>
+</html>

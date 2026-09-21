@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+
+    <title>
+        <%= title %>
+    </title>
+</head>
+
+<body
+    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+    data-open="click"
+    data-menu="vertical-dark-menu"
+    data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+
+        <!-- Breadcrumbs -->
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col s12 m6">
+
+                            <h6 class="breadcrumbs-title">
+                                <span>
+                                    <%= title %>
+                                </span>
+                            </h6>
+
+                        </div>
+
+                        <div class="col s12 m6 right-align-md">
+
+                            <ol class="breadcrumbs mb-0">
+
+                                <li class="breadcrumb-item">
+                                    <a href="/admin">
+                                        Dashboard
+                                    </a>
+                                </li>
+
+                                <li class="breadcrumb-item">
+                                    <a href="/admin/rhythm/symptom-options">
+                                        Physical Symptom Options
+                                    </a>
+                                </li>
+
+                                <li class="breadcrumb-item active">
+                                    <%= title %>
+                                </li>
+
+                            </ol>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Main Content -->
+        <div class="container pl-2 pr-2">
+
+            <%- include('messages',{messages:messages}) %>
+
+            <div class="card">
+
+                <div class="card-content">
+
+                    <!--
+                        IMPORTANT:
+                        Add:
+                        /admin/rhythm/symptom-options
+
+                        Edit:
+                        /admin/rhythm/symptom-options/:id
+                    -->
+
+                    <form
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="<%= option
+                            ? '/admin/rhythm/symptom-options/' + option._id
+                            : '/admin/rhythm/symptom-options'
+                        %>">
+
+                        <div class="row">
+
+
+                            <!-- NAME -->
+
+                            <div class="input-field col s12 m6">
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    required
+                                    value="<%= option ? option.name : '' %>">
+
+                                <label class="active">
+                                    Name (e.g. "Cramps", "Bloating")
+                                </label>
+
+                            </div>
+
+
+                            <!-- ICON -->
+
+                            <div class="col s12 m6">
+
+                                <label
+                                    for="icon"
+                                    style="
+                                        display:block;
+                                        margin-bottom:8px;
+                                        font-weight:500;
+                                    ">
+
+                                    Icon
+
+                                </label>
+
+                                <input
+                                    type="file"
+                                    id="icon"
+                                    name="icon"
+                                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                                    class="browser-default">
+
+
+                                <small
+                                    style="
+                                        display:block;
+                                        margin-top:8px;
+                                        color:#777;
+                                    ">
+
+                                    Select icon image from your computer.
+                                    PNG, JPG, JPEG and WEBP are supported.
+
+                                </small>
+
+
+                                <!-- EXISTING IMAGE -->
+
+                                <% if (option && option.icon) { %>
+
+                                    <div style="margin-top:15px;">
+
+                                        <p style="margin-bottom:8px;">
+                                            Current Icon:
+                                        </p>
+
+                                        <img
+                                            src="<%= option.icon %>"
+                                            alt="<%= option.name %>"
+                                            style="
+                                                width:70px;
+                                                height:70px;
+                                                object-fit:contain;
+                                                border:1px solid #ddd;
+                                                border-radius:8px;
+                                                padding:5px;
+                                            ">
+
+                                    </div>
+
+                                <% } %>
+
+
+                                <!-- NEW IMAGE PREVIEW -->
+
+                                <div
+                                    id="iconPreviewContainer"
+                                    style="
+                                        display:none;
+                                        margin-top:15px;
+                                    ">
+
+                                    <p style="margin-bottom:8px;">
+                                        New Icon Preview:
+                                    </p>
+
+                                    <img
+                                        id="iconPreview"
+                                        src=""
+                                        alt="Preview"
+                                        style="
+                                            width:70px;
+                                            height:70px;
+                                            object-fit:contain;
+                                            border:1px solid #ddd;
+                                            border-radius:8px;
+                                            padding:5px;
+                                        ">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ORDER -->
+
+                            <div class="input-field col s12 m6">
+
+                                <input
+                                    type="number"
+                                    name="order"
+                                    value="<%= option ? option.order : 0 %>"
+                                    min="0">
+
+                                <label class="active">
+                                    Display Order
+                                </label>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div class="input-field col s12 m6">
+
+                                <select name="isActive">
+
+                                    <option
+                                        value="true"
+                                        <%= !option || option.isActive
+                                            ? 'selected'
+                                            : ''
+                                        %>>
+
+                                        Active
+
+                                    </option>
+
+                                    <option
+                                        value="false"
+                                        <%= option && !option.isActive
+                                            ? 'selected'
+                                            : ''
+                                        %>>
+
+                                        Inactive
+
+                                    </option>
+
+                                </select>
+
+                                <label>Status</label>
+
+                            </div>
+
+
+                            <!-- BUTTONS -->
+
+                            <div
+                                class="col s12 right-align"
+                                style="margin-top:20px;">
+
+                                <button
+                                    type="submit"
+                                    class="btn blue">
+
+                                    <%= option ? "Update" : "Save" %>
+
+                                </button>
+
+                                <a
+                                    href="/admin/rhythm/symptom-options"
+                                    class="btn red">
+
+                                    Cancel
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <%- include('_layouts/commonJs') %>
+
+
+    <!-- SELECT + IMAGE PREVIEW -->
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('select').formSelect();
+
+            M.updateTextFields();
+
+        });
+
+
+        // Image Preview
+
+        const iconInput =
+            document.getElementById("icon");
+
+        const iconPreview =
+            document.getElementById("iconPreview");
+
+        const iconPreviewContainer =
+            document.getElementById("iconPreviewContainer");
+
+
+        if (iconInput) {
+
+            iconInput.addEventListener(
+                "change",
+                function (event) {
+
+                    const file =
+                        event.target.files[0];
+
+                    if (!file) {
+
+                        iconPreviewContainer.style.display =
+                            "none";
+
+                        iconPreview.src = "";
+
+                        return;
+                    }
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        function (e) {
+
+                            iconPreview.src =
+                                e.target.result;
+
+                            iconPreviewContainer.style.display =
+                                "block";
+
+                        };
+
+
+                    reader.readAsDataURL(file);
+
+                }
+            );
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+```

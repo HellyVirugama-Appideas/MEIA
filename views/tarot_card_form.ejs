@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/content/tarot">Tarot Cards</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" action="<%= card ? '/admin/content/tarot/' + card._id : '/admin/content/tarot' %>" enctype="multipart/form-data">
+                                <div class="input-field col s12 m6">
+                                    <label for="name" class="active">Card Name</label>
+                                    <input id="name" name="name" type="text" value="<%= card ? card.name : '' %>" placeholder="The High Priestess" required>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="arcana">Arcana</label>
+                                    <select id="arcana" name="arcana">
+                                        <option value="major" <%= (!card || card.arcana === 'major') ? 'selected' : '' %>>Major</option>
+                                        <option value="minor" <%= card && card.arcana === 'minor' ? 'selected' : '' %>>Minor</option>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="keywords" class="active">Keywords (comma separated)</label>
+                                    <input id="keywords" name="keywords" type="text" value="<%= card && card.keywords ? card.keywords.join(', ') : '' %>" placeholder="intuition, mystery, subconscious">
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="description" class="active">Description</label>
+                                    <textarea id="description" name="description" class="materialize-textarea" rows="5" required><%= card ? card.description : '' %></textarea>
+                                </div>
+                                <div class="file-field input-field col s12">
+                                    <div class="btn theme-bg-warn">
+                                        <span>Card Image</span>
+                                        <input type="file" name="image" accept="image/*">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" type="text" placeholder="Upload card image">
+                                    </div>
+                                </div>
+                                <% if (card && card.image) { %>
+                                    <div class="col s12">
+                                        <img src="<%= card.image %>" alt="<%= card.name %>" style="max-width: 150px; border-radius: 8px; margin-bottom: 10px;" />
+                                    </div>
+                                <% } %>
+                                <div class="col s12" style="margin: 10px 0;">
+                                    <label>
+                                        <input type="checkbox" name="isActive" <%= (!card || card.isActive) ? 'checked' : '' %> />
+                                        <span>Active (included in shuffle)</span>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit"><%= card ? 'Update' : 'Save' %></button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/content/tarot">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { $('select').formSelect(); M.updateTextFields(); });</script>
+</body>
+</html>

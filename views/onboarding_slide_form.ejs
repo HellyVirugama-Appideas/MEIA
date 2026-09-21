@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/onboarding">Onboarding Slides</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" enctype="multipart/form-data"
+                                action="<%= slide ? '/admin/onboarding/' + slide._id : '/admin/onboarding' %>">
+
+                                <div class="file-field input-field col s12">
+                                    <div class="btn">
+                                        <span>Slide Image</span>
+                                        <input type="file" name="image" accept="image/*">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" type="text" placeholder="Upload Slide Image">
+                                    </div>
+                                </div>
+
+                                <% if (slide && slide.image) { %>
+                                    <div class="col s12" style="margin-bottom:15px;">
+                                        <img src="<%= slide.image %>" style="width:180px;border-radius:10px">
+                                    </div>
+                                <% } %>
+
+                                <div class="input-field col s12">
+                                    <label for="title" class="active">Title</label>
+                                    <input id="title" name="title" type="text" value="<%= slide ? slide.title : '' %>" required>
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <label for="description" class="active">Description</label>
+                                    <textarea id="description" name="description" class="materialize-textarea"><%= slide ? slide.description : '' %></textarea>
+                                </div>
+
+                                <div class="input-field col s12 m6">
+                                    <label for="order" class="active">Slide Order</label>
+                                    <input id="order" name="order" type="number" value="<%= slide ? slide.order : 0 %>">
+                                </div>
+
+                                <div class="col s12 m6" style="margin-top: 25px;">
+                                    <label>
+                                        <input type="checkbox" name="isActive" <%= (!slide || slide.isActive) ? 'checked' : '' %> />
+                                        <span>Active (visible to users)</span>
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit"><%= slide ? 'Update' : 'Save' %></button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/onboarding">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>
+        $(document).ready(function () {
+            M.updateTextFields();
+            M.textareaAutoResize($('textarea'));
+        });
+    </script>
+</body>
+</html>

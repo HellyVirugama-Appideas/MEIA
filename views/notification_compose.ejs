@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title>Send Notification | <%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span>Send Notification</span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/notifications">Notifications</a></li>
+                                <li class="breadcrumb-item active">Send</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" action="/admin/notifications/send">
+                                <div class="input-field col s12 m6">
+                                    <label for="target">Send To</label>
+                                    <select id="target" name="target" required>
+                                        <option value="all">All Active Users (Broadcast)</option>
+                                        <% users.forEach(u => { %>
+                                            <option value="<%= u._id %>"><%= u.name || u.phone %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="type">Type</label>
+                                    <select id="type" name="type">
+                                        <option value="system">System</option>
+                                        <option value="reminder">Reminder</option>
+                                        <option value="promo">Promo</option>
+                                        <option value="account">Account</option>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="title" class="active">Title</label>
+                                    <input id="title" name="title" type="text" required>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="message" class="active">Message</label>
+                                    <textarea id="message" name="message" class="materialize-textarea" rows="4" required></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit">Send</button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/notifications">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { $('select').formSelect(); M.updateTextFields(); });</script>
+</body>
+</html>

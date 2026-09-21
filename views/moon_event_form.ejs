@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/celestial/moon-events">Upcoming Moon Events</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" action="<%= event ? '/admin/celestial/moon-events/' + event._id : '/admin/celestial/moon-events' %>">
+                                <div class="input-field col s12">
+                                    <label for="phaseName" class="active">Phase Name</label>
+                                    <select id="phaseName" name="phaseName" required>
+                                        <% const phaseOptions = ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]; %>
+                                        <% phaseOptions.forEach(function(p){ %>
+                                            <option value="<%= p %>" <%= event && event.phaseName === p ? 'selected' : '' %>><%= p %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="subtitle" class="active">Subtitle</label>
+                                    <input id="subtitle" name="subtitle" type="text" value="<%= event ? event.subtitle || '' : '' %>" placeholder="(Strawberry Moon)">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="date" class="active">Date</label>
+                                    <input id="date" name="date" type="date"
+                                        value="<%= event && event.date ? new Date(event.date).toISOString().substring(0,10) : '' %>" required>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="time" class="active">Time</label>
+                                    <input id="time" name="time" type="text" value="<%= event ? event.time || '' : '' %>" placeholder="9:12 PM">
+                                </div>
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit"><%= event ? 'Update' : 'Save' %></button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/celestial/moon-events">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { $('select').formSelect(); M.updateTextFields(); });</script>
+</body>
+</html>

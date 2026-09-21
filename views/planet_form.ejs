@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6">
+                            <h6 class="breadcrumbs-title"><span><%= title %></span></h6>
+                        </div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/celestial/planets">Planets</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+
+                            <form method="POST"
+                                  action="<%= planet ? '/admin/celestial/planets/' + planet._id : '/admin/celestial/planets' %>"
+                                  enctype="multipart/form-data">
+
+                                <!-- Name + Title -->
+                                <div class="input-field col s12 m6">
+                                    <label for="name" class="active">Planet Name</label>
+                                    <input id="name" name="name" type="text"
+                                           value="<%= planet ? planet.name : '' %>"
+                                           placeholder="Venus" required>
+                                </div>
+
+                                <div class="input-field col s12 m6">
+                                    <label for="title" class="active">Title</label>
+                                    <input id="title" name="title" type="text"
+                                           value="<%= planet ? planet.title || '' : '' %>"
+                                           placeholder="The Goddess Planet of Desire">
+                                </div>
+
+                                <!-- Current Icon -->
+                                <div class="input-field col s12">
+                                    <label class="active">Current Icon</label><br>
+                                    <% if (planet && planet.icon) { %>
+                                        <img src="<%= planet.icon %>" alt="<%= planet.name %>"
+                                             style="width:80px;height:80px;object-fit:cover;border-radius:50%;margin-bottom:10px;">
+                                    <% } else { %>
+                                        <p class="grey-text">No icon uploaded yet.</p>
+                                    <% } %>
+                                </div>
+
+                                <!-- Upload Icon -->
+                                <div class="file-field input-field col s12">
+                                    <div class="btn theme-bg-primary">
+                                        <span>Choose Icon</span>
+                                        <input type="file" name="icon" accept="image/*">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" type="text"
+                                               placeholder="Upload planet icon (jpg, png, webp, gif — max 5MB)">
+                                    </div>
+                                </div>
+
+                                <!-- Essence Title -->
+                                <div class="input-field col s12">
+                                    <label for="essenceTitle" class="active">The Essence Of... - Title</label>
+                                    <input id="essenceTitle" name="essenceTitle" type="text"
+                                           value="<%= planet ? planet.essenceTitle || '' : '' %>"
+                                           placeholder="The Essence of Venus">
+                                </div>
+
+                                <!-- Essence Description -->
+                                <div class="input-field col s12">
+                                    <label for="essence" class="active">The Essence Of... (description)</label>
+                                    <textarea id="essence" name="essence" class="materialize-textarea" rows="4"><%= planet ? planet.essence || '' : '' %></textarea>
+                                </div>
+
+                                <!-- Governs -->
+                                <div class="input-field col s12">
+                                    <label for="governs" class="active">Governs (comma separated)</label>
+                                    <input id="governs" name="governs" type="text"
+                                           value="<%= planet && planet.governs ? planet.governs.join(', ') : '' %>"
+                                           placeholder="Identity, Vitality, Ego, Life Force">
+                                </div>
+
+                                <!-- Archetype -->
+                                <div class="input-field col s12">
+                                    <label for="archetype" class="active">Archetype (comma separated)</label>
+                                    <input id="archetype" name="archetype" type="text"
+                                           value="<%= planet && planet.archetype ? planet.archetype.join(', ') : '' %>"
+                                           placeholder="The King, The Hero, The Creator">
+                                </div>
+
+                                <!-- Quote -->
+                                <div class="input-field col s12">
+                                    <label for="quote" class="active">Quote</label>
+                                    <input id="quote" name="quote" type="text"
+                                           value="<%= planet ? planet.quote || '' : '' %>"
+                                           placeholder="Enter a meaningful quote">
+                                </div>
+
+                                <!-- Influence Title -->
+                                <div class="input-field col s12">
+                                    <label for="influenceTitle" class="active">Your Influence - Title</label>
+                                    <input id="influenceTitle" name="influenceTitle" type="text"
+                                           value="<%= planet ? planet.influenceTitle || '' : '' %>"
+                                           placeholder="Your Venus Influence">
+                                </div>
+
+                                <!-- Influence Description -->
+                                <div class="input-field col s12">
+                                    <label for="influenceDescription" class="active">Your Influence - Description</label>
+                                    <textarea id="influenceDescription" name="influenceDescription" class="materialize-textarea" rows="4"><%= planet ? planet.influenceDescription || '' : '' %></textarea>
+                                </div>
+
+                                <!-- Influence Tags -->
+                                <div class="input-field col s12">
+                                    <label for="influenceTags" class="active">Influence Tags (comma separated)</label>
+                                    <input id="influenceTags" name="influenceTags" type="text"
+                                           value="<%= planet && planet.influenceTags ? planet.influenceTags.join(', ') : '' %>"
+                                           placeholder="Confidence, Creativity, Purpose, Leadership">
+                                </div>
+
+                                <!-- Order -->
+                                <div class="input-field col s12 m4">
+                                    <label for="order" class="active">Display Order</label>
+                                    <input id="order" name="order" type="number"
+                                           value="<%= planet ? planet.order : 0 %>">
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit">
+                                            <%= planet ? 'Update' : 'Save' %>
+                                        </button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/celestial/planets">Cancel</a>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('_layouts/commonJs') %>
+    <script>
+        $(document).ready(function () {
+            M.textareaAutoResize($('textarea'));
+            M.updateTextFields();
+        });
+    </script>
+</body>
+</html>

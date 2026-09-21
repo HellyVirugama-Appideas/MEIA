@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span>Moon Phase Content</span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Moon Phase Content</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 row mt-2">
+                <div class="col s12">
+                    <%- include('messages', { messages: messages }) %>
+                    <table class="responsive-table striped">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Phase</th>
+                                <th>Keywords</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(phases && phases.length > 0){ %>
+                                <% phases.forEach(p => { %>
+                                    <tr>
+                                        <td>
+                                            <% if (p.image) { %>
+                                                <img src="<%= p.image %>" alt="<%= p.phaseName %>"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
+                                            <% } else { %>
+                                                <span class="grey-text">No icon</span>
+                                            <% } %>
+                                        </td>
+                                        <td><span class="chip"><%= p.phaseName %></span></td>
+                                        <td><%= (p.keywords && p.keywords.length) ? p.keywords.join(', ') : '—' %></td>
+                                        <td><%= p.description ? p.description.substring(0,60) + '...' : '—' %></td>
+                                        <td>
+                                            <a href="/admin/celestial/moon-phases/edit/<%= p._id %>" class="btn-floating theme-bg-warn">
+                                                <i class="material-icons">edit</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="5">No moon phase content found.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+</body>
+</html>

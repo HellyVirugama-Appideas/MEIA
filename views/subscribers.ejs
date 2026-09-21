@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title>Subscribers | <%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span>Subscribers</span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/subscription/plans">Plans</a></li>
+                                <li class="breadcrumb-item active">Subscribers</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-2"><%- include('messages', { messages: messages }) %></div>
+            <div class="col s12 row mt-2">
+                <div class="col s12">
+                    <table class="responsive-table striped">
+                        <thead><tr><th>User</th><th>Plan</th><th>Status</th><th>Renews / Ended</th><th>Auto-cancel</th></tr></thead>
+                        <tbody>
+                            <% if(subscriptions && subscriptions.length > 0){ %>
+                                <% subscriptions.forEach(s => { %>
+                                    <tr>
+                                        <td><%= s.user ? (s.user.name || s.user.phone) : 'Unknown' %></td>
+                                        <td><%= s.plan ? s.plan.name : '-' %></td>
+                                        <td>
+                                            <span class="badge <%= s.status === 'active' ? 'green' : (s.status === 'past_due' ? 'orange' : 'red') %> white-text">
+                                                <%= s.status %>
+                                            </span>
+                                        </td>
+                                        <td><%= s.currentPeriodEnd ? new Date(s.currentPeriodEnd).toLocaleDateString('en-IN') : '-' %></td>
+                                        <td><%= s.cancelAtPeriodEnd ? 'Yes' : 'No' %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="5">No subscribers yet.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+</body>
+</html>

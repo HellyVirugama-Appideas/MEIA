@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/content/breathing">Breathing Sessions</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" action="<%= session ? '/admin/content/breathing/' + session._id : '/admin/content/breathing' %>">
+                                <div class="input-field col s12">
+                                    <label for="title" class="active">Title</label>
+                                    <input id="title" name="title" type="text" value="<%= session ? session.title : '' %>" required placeholder="Cosmic Inhale">
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="subtitle" class="active">Subtitle</label>
+                                    <input id="subtitle" name="subtitle" type="text" value="<%= session ? session.subtitle || '' : '' %>" placeholder="Take a mindful moment, breathe with today's lunar rhythm.">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="icon" class="active">Icon</label>
+                                    <input id="icon" name="icon" type="text" value="<%= session ? session.icon || '' : '' %>">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="totalCycles" class="active">Total Cycles</label>
+                                    <input id="totalCycles" name="totalCycles" type="number" value="<%= session ? session.totalCycles : 3 %>">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="audioType" class="active">Audio</label>
+                                    <input id="audioType" name="audioType" type="text" value="<%= session ? session.audioType || 'Guided + Chimes' : 'Guided + Chimes' %>" placeholder="Guided + Chimes">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="cyclePhaseKey" class="active">Cycle Focus</label>
+                                    <select id="cyclePhaseKey" name="cyclePhaseKey">
+                                        <% const phaseOptions = [
+                                            { value: "all", label: "All phases" },
+                                            { value: "menstrual", label: "Menstrual" },
+                                            { value: "follicular", label: "Follicular" },
+                                            { value: "ovulation", label: "Ovulation" },
+                                            { value: "luteal", label: "Bloom" },
+                                        ]; %>
+                                        <% phaseOptions.forEach(function(p){ %>
+                                            <option value="<%= p.value %>" <%= session && session.cyclePhaseKey === p.value ? 'selected' : (!session && p.value === 'all' ? 'selected' : '') %>>
+                                                <%= p.label %>
+                                            </option>
+                                        <% }) %>
+                                    </select>
+                                    <span class="helper-text">Shown as "Cycle Focus" on the Cosmic Inhale screen; used to recommend this session during that phase.</span>
+                                </div>
+
+                                <p><strong>Breathing timing</strong></p>
+                                <div class="input-field col s12 m4">
+                                    <label for="inhaleSeconds" class="active">Inhale (sec)</label>
+                                    <input id="inhaleSeconds" name="inhaleSeconds" type="number" value="<%= session ? session.inhaleSeconds : 4 %>">
+                                </div>
+                                <div class="input-field col s12 m4">
+                                    <label for="holdSeconds" class="active">Hold (sec)</label>
+                                    <input id="holdSeconds" name="holdSeconds" type="number" value="<%= session ? session.holdSeconds : 7 %>">
+                                </div>
+                                <div class="input-field col s12 m4">
+                                    <label for="exhaleSeconds" class="active">Exhale (sec)</label>
+                                    <input id="exhaleSeconds" name="exhaleSeconds" type="number" value="<%= session ? session.exhaleSeconds : 8 %>">
+                                </div>
+
+                                <div class="col s12">
+                                    <h6>Benefits (e.g. "Reduce Stress", "Improve Focus", "Emotional Balance")</h6>
+                                    <div id="benefitContainer">
+                                        <% const benefits = session && session.benefits && session.benefits.length ? session.benefits : [{ label: "", icon: "", description: "" }]; %>
+                                        <% benefits.forEach(function(b){ %>
+                                            <div class="row benefit-item">
+                                                <div class="input-field col s3">
+                                                    <input type="text" name="benefitLabel" value="<%= b.label %>" placeholder="Label">
+                                                </div>
+                                                <div class="input-field col s3">
+                                                    <input type="text" name="benefitIcon" value="<%= b.icon %>" placeholder="Icon">
+                                                </div>
+                                                <div class="input-field col s4">
+                                                    <input type="text" name="benefitDescription" value="<%= b.description || '' %>" placeholder="Short subtext">
+                                                </div>
+                                                <div class="col s2" style="margin-top:20px">
+                                                    <a href="javascript:void(0)" class="btn red removeBenefit">
+                                                        <i class="material-icons">remove</i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                    <a class="btn blue" id="addBenefit">Add Benefit</a>
+                                    <hr>
+                                </div>
+
+                                <div class="col s12" style="margin: 10px 0;">
+                                    <label>
+                                        <input type="checkbox" name="isActive" <%= (!session || session.isActive) ? 'checked' : '' %> />
+                                        <span>Active (visible in app)</span>
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit"><%= session ? 'Update' : 'Save' %></button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/content/breathing">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>
+        $(document).ready(function () {
+            M.updateTextFields();
+            $('select').formSelect();
+
+            $("#addBenefit").click(function () {
+                $("#benefitContainer").append(`
+<div class="row benefit-item">
+<div class="input-field col s3">
+<input type="text" name="benefitLabel" placeholder="Label">
+</div>
+<div class="input-field col s3">
+<input type="text" name="benefitIcon" placeholder="Icon">
+</div>
+<div class="input-field col s4">
+<input type="text" name="benefitDescription" placeholder="Short subtext">
+</div>
+<div class="col s2" style="margin-top:20px">
+<a href="javascript:void(0)" class="btn red removeBenefit">
+<i class="material-icons">remove</i>
+</a>
+</div>
+</div>
+`);
+                $('select').formSelect();
+            });
+
+            $(document).on("click", ".removeBenefit", function () {
+                $(this).closest(".benefit-item").remove();
+            });
+        });
+    </script>
+</body>
+</html>

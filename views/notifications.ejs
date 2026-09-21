@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title>Notifications | <%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span>Notifications</span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Notifications</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-2">
+                <%- include('messages', { messages: messages }) %>
+                <div class="row">
+                    <div class="col s12 right-align-md">
+                        <a href="/admin/notifications/push-setup" class="btn btn-flat grey lighten-2">Push Setup</a>
+                        <a href="/admin/notifications/new" class="btn pull-right btn-add btn-breadcrumbs white-text">Send Notification</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 row mt-2">
+                <div class="col s12">
+                    <table class="responsive-table striped">
+                        <thead><tr><th>User</th><th>Title</th><th>Message</th><th>Type</th><th>Read</th><th>Sent</th></tr></thead>
+                        <tbody>
+                            <% if(notifications && notifications.length > 0){ %>
+                                <% notifications.forEach(n => { %>
+                                    <tr>
+                                        <td><%= n.user ? (n.user.name || n.user.phone) : 'Unknown' %></td>
+                                        <td><%= n.title %></td>
+                                        <td><%= n.message.slice(0, 60) %><%= n.message.length > 60 ? '...' : '' %></td>
+                                        <td><%= n.type %></td>
+                                        <td><%= n.isRead ? 'Yes' : 'No' %></td>
+                                        <td><%= new Date(n.createdAt).toLocaleString('en-IN') %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="6">No notifications sent yet.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+</body>
+</html>

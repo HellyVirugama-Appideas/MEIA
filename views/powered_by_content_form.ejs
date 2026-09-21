@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/celestial/powered-by">Powered By Content</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" action="<%= item ? '/admin/celestial/powered-by/' + item._id : '/admin/celestial/powered-by' %>">
+                                <div class="input-field col s12">
+                                    <label for="title" class="active">Title</label>
+                                    <input id="title" name="title" type="text" value="<%= item ? item.title : '' %>" required placeholder="Swiss Ephemeris">
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="description" class="active">Description</label>
+                                    <input id="description" name="description" type="text" value="<%= item ? item.description : '' %>" required placeholder="High precision astronomical data">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="icon" class="active">Icon</label>
+                                    <input id="icon" name="icon" type="text" value="<%= item ? item.icon || '' : '' %>">
+                                </div>
+                                <div class="input-field col s12 m3">
+                                    <label for="order" class="active">Order</label>
+                                    <input id="order" name="order" type="number" value="<%= item ? item.order : 0 %>">
+                                </div>
+                                <div class="input-field col s12 m3">
+                                    <label for="isActive">Status</label>
+                                    <select id="isActive" name="isActive">
+                                        <option value="true" <%= (!item || item.isActive) ? 'selected' : '' %>>Active</option>
+                                        <option value="false" <%= (item && !item.isActive) ? 'selected' : '' %>>Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit"><%= item ? 'Update' : 'Save' %></button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/celestial/powered-by">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { $('select').formSelect(); M.updateTextFields(); });</script>
+</body>
+</html>

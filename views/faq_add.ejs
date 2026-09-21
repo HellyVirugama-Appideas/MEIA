@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title>Add FAQ | <%= title %></title>
+</head>
+
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns" 
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6">
+                            <h6 class="breadcrumbs-title"><span>Add FAQ</span></h6>
+                        </div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/cms/faq">FAQ's</a></li>
+                                <li class="breadcrumb-item active">Add FAQ</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt-2">
+                <%- include('messages', { messages: messages }) %>
+            </div>
+
+            <div class="col s12 row mt-2">
+                <div class="col s12 m10 l8">
+                    <div class="card">
+                        <div class="card-content">
+                            <!-- 👇 IMPORTANT: posts to /admin/cms/faq (create route), NOT /admin/cms/faq/add -->
+                            <form action="/admin/cms/faq" method="POST">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input id="question" name="question" type="text" required>
+                                        <label for="question">Question</label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <textarea id="answer" name="answer" class="materialize-textarea" required></textarea>
+                                        <label for="answer">Answer</label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <input id="order" name="order" type="number" value="0">
+                                        <label for="order" class="active">Order (lower shows first)</label>
+                                    </div>
+                                    <div class="col s6" style="margin-top: 25px;">
+                                        <label>
+                                            <input type="checkbox" name="isActive" checked />
+                                            <span>Active (visible in app)</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="col s12">
+                                        <button type="submit" class="btn theme-bg-success white-text">Save FAQ</button>
+                                        <a href="/admin/cms/faq" class="btn btn-flat grey lighten-2">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('_layouts/commonJs') %>
+
+    <script>
+        $(document).ready(function(){
+            $('select').formSelect();
+            M.updateTextFields();
+        });
+    </script>
+</body>
+</html>

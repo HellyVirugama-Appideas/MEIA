@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/celestial/birth-chart-personality">Birth Chart Personality Content</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="card-content">
+                    <% if (availableSigns.length === 0) { %>
+                        <p class="grey-text">All 12 sun signs already have content. Edit an existing one from the list instead.</p>
+                        <a href="/admin/celestial/birth-chart-personality" class="btn red">Back to List</a>
+                    <% } else { %>
+                        <form method="POST" action="/admin/celestial/birth-chart-personality">
+                            <div class="input-field col s12 m6">
+                                <select name="sunSign" required>
+                                    <option value="" disabled selected>Choose a sun sign</option>
+                                    <% availableSigns.forEach(function(name){ %>
+                                        <option value="<%= name %>"><%= name %></option>
+                                    <% }) %>
+                                </select>
+                                <label>Sun Sign</label>
+                            </div>
+
+                            <div class="input-field col s12 m6">
+                                <select name="isActive">
+                                    <option value="true" selected>Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                                <label>Status</label>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <textarea id="personalitySummary" name="personalitySummary" class="materialize-textarea" required></textarea>
+                                <label for="personalitySummary" class="active">Your Cosmic Personality (summary paragraph)</label>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <input id="strengths" name="strengths" type="text" placeholder="Creative, Compassionate, Balanced, Curious">
+                                <label for="strengths" class="active">Strengths (comma separated)</label>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <input id="growthAreas" name="growthAreas" type="text" placeholder="Overthinking, Emotional sensitivity, Perfectionism">
+                                <label for="growthAreas" class="active">Growth Areas (comma separated)</label>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <textarea id="cosmicGift" name="cosmicGift" class="materialize-textarea"></textarea>
+                                <label for="cosmicGift" class="active">Cosmic Gift (short paragraph)</label>
+                            </div>
+
+                            <div class="col s12 right-align">
+                                <button type="submit" class="btn">Create</button>
+                                <a href="/admin/celestial/birth-chart-personality" class="btn red">Cancel</a>
+                            </div>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>
+        $(document).ready(function () {
+            $('select').formSelect();
+            M.updateTextFields();
+            M.textareaAutoResize($('textarea'));
+        });
+    </script>
+</body>
+</html>

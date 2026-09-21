@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/celestial/moon-phases">Moon Phase Content</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST" action="/admin/celestial/moon-phases/<%= phase._id %>" enctype="multipart/form-data">
+                                <div class="input-field col s12">
+                                    <label class="active">Phase (fixed)</label>
+                                    <input type="text" value="<%= phase.phaseName %>" disabled>
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <label class="active">Current Icon</label><br>
+                                    <% if (phase.image) { %>
+                                        <img src="<%= phase.image %>" alt="<%= phase.phaseName %>"
+                                             style="width:80px;height:80px;object-fit:cover;border-radius:50%;margin-bottom:10px;">
+                                    <% } else { %>
+                                        <p class="grey-text">No icon uploaded yet.</p>
+                                    <% } %>
+                                </div>
+
+                                <div class="file-field input-field col s12">
+                                    <div class="btn theme-bg-primary">
+                                        <span>Choose Icon</span>
+                                        <input type="file" name="image" accept="image/*">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" type="text" placeholder="Upload moon phase icon (jpg, png, webp, gif — max 5MB)">
+                                    </div>
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <label for="keywords" class="active">Keywords (comma separated)</label>
+                                    <input id="keywords" name="keywords" type="text"
+                                        value="<%= (phase.keywords && phase.keywords.length) ? phase.keywords.join(', ') : '' %>"
+                                        placeholder="Illuminate, Dream, Intuition">
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <label for="description" class="active">Description</label>
+                                    <textarea id="description" name="description" class="materialize-textarea"><%= phase.description || '' %></textarea>
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <label for="affirmation" class="active">Affirmation Quote (e.g. "The moon does not fight the dark; it simply shines.")</label>
+                                    <textarea id="affirmation" name="affirmation" class="materialize-textarea"><%= phase.affirmation || '' %></textarea>
+                                </div>
+
+                                <div class="input-field col s12">
+                                    <label for="guideContent" class="active">Full Guide Content</label>
+                                    <textarea id="guideContent" name="guideContent" class="materialize-textarea"><%= phase.guideContent || '' %></textarea>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit">Update</button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/celestial/moon-phases">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { M.updateTextFields(); M.textareaAutoResize($('textarea')); });</script>
+</body>
+</html>

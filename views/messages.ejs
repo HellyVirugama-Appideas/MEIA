@@ -1,0 +1,61 @@
+<% if (typeof messages !== 'undefined' && messages && Object.keys(messages).length > 0) { %>
+  <%
+    const classMap = {
+      error: 'red',
+      success: 'green',
+      warning: 'orange',
+      info: 'blue'
+    };
+    Object.keys(messages).forEach(function (type) {
+      const list = messages[type];
+      if (!list || (Array.isArray(list) && list.length === 0)) return;
+      const items = Array.isArray(list) ? list : [list];
+      const cssClass = classMap[type] || type;
+  %>
+    <div class="card-alert card <%= cssClass %> flash-message" style="margin: 12px 0;">
+      <div class="card-content white-text" style="padding: 14px 20px; position: relative;">
+        <% items.forEach(function (message) { %>
+          <p style="margin: 0; font-weight: 500; padding-right: 28px;"><%= message %></p>
+        <% }) %>
+        <button type="button" class="flash-close" aria-label="Close"
+          style="position: absolute; right: 12px; top: 10px; background: transparent; border: none; color: white; font-size: 22px; cursor: pointer; line-height: 1;">
+          ×
+        </button>
+      </div>
+    </div>
+  <% }) %>
+
+  <script>
+    (function () {
+      // URL se ?error=... / ?success=... turant hatao (reload nahi)
+      if (window.location.search) {
+        var cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+
+      var alerts = document.querySelectorAll(".flash-message");
+      alerts.forEach(function (el) {
+        var btn = el.querySelector(".flash-close");
+        if (btn) {
+          btn.addEventListener("click", function () {
+            el.style.transition = "opacity 0.4s ease";
+            el.style.opacity = "0";
+            setTimeout(function () {
+              if (el.parentNode) el.remove();
+            }, 400);
+          });
+        }
+
+        // 3 second baad auto hide
+        setTimeout(function () {
+          if (!el.parentNode) return;
+          el.style.transition = "opacity 0.5s ease";
+          el.style.opacity = "0";
+          setTimeout(function () {
+            if (el.parentNode) el.remove();
+          }, 500);
+        }, 3000);
+      });
+    })();
+  </script>
+<% } %>

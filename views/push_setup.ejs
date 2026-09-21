@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title>Push Notification Setup | <%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span>Push Notification Setup</span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/notifications">Notifications</a></li>
+                                <li class="breadcrumb-item active">Push Setup</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <p class="grey-text">
+                                Configure your push notification provider credentials here. Once saved and enabled,
+                                notifications sent from the Notifications page will also deliver as real device push
+                                notifications (requires the mobile app to register device tokens via
+                                <code>POST /api/device/register</code>).
+                            </p>
+                            <form method="POST" action="/admin/notifications/push-setup">
+                                <div class="input-field col s12 m6">
+                                    <label for="provider">Provider</label>
+                                    <select id="provider" name="provider">
+                                        <option value="fcm" <%= config.provider === 'fcm' ? 'selected' : '' %>>Firebase Cloud Messaging (FCM)</option>
+                                        <option value="onesignal" <%= config.provider === 'onesignal' ? 'selected' : '' %>>OneSignal</option>
+                                    </select>
+                                </div>
+                                <div class="col s12" style="margin-top: 25px;">
+                                    <label>
+                                        <input type="checkbox" name="isEnabled" <%= config.isEnabled ? 'checked' : '' %> />
+                                        <span>Enabled</span>
+                                    </label>
+                                </div>
+
+                                <h6>Firebase (FCM)</h6>
+                                <div class="input-field col s12">
+                                    <label for="fcmServerKey" class="active">FCM Server Key</label>
+                                    <input id="fcmServerKey" name="fcmServerKey" type="text" value="<%= config.fcmServerKey || '' %>">
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="fcmProjectId" class="active">FCM Project ID</label>
+                                    <input id="fcmProjectId" name="fcmProjectId" type="text" value="<%= config.fcmProjectId || '' %>">
+                                </div>
+
+                                <h6>OneSignal</h6>
+                                <div class="input-field col s12 m6">
+                                    <label for="oneSignalAppId" class="active">App ID</label>
+                                    <input id="oneSignalAppId" name="oneSignalAppId" type="text" value="<%= config.oneSignalAppId || '' %>">
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="oneSignalApiKey" class="active">API Key</label>
+                                    <input id="oneSignalApiKey" name="oneSignalApiKey" type="text" value="<%= config.oneSignalApiKey || '' %>">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit">Save Settings</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { $('select').formSelect(); M.updateTextFields(); });</script>
+</body>
+</html>

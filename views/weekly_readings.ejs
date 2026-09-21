@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+    <title>Weekly Readings | <%= title %></title>
+
+    <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="/app-assets/css/pages/data-tables.css">
+
+    <style>
+        table tr td, th { text-align: center; }
+        .title-cell {
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left !important;
+        }
+        tr.reading-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        tr.reading-row:hover {
+            background-color: #f5f5f5 !important;
+        }
+        td.actions-column {
+            cursor: default;
+        }
+        .hero-thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <%- include('messages', { messages: messages }) %>
+                        <div class="col s12 m6 l6">
+                            <h6 class="breadcrumbs-title"><span>Weekly Readings</span></h6>
+                        </div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Weekly Readings</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="breadcrumbs-wrapper" style="background-color: white;">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12 right-align-md">
+                        <a class="btn pull-right btn-add btn-breadcrumbs white-text"
+                           href="/admin/readings/weekly/add">Add Weekly Reading</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12">
+            <div class="container">
+                <div class="section section-data-tables">
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="row">
+                                        <div class="col s12 overflow">
+                                            <table id="page-length-option" class="display">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sr</th>
+                                                        <th>Image</th>
+                                                        <th>Week Start</th>
+                                                        <th>Title</th>
+                                                       
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% if (readings && readings.length > 0) { %>
+                                                        <% readings.forEach((item, index) => { %>
+                                                            <tr class="reading-row" data-href="/admin/readings/weekly/edit/<%= item._id %>">
+                                                                <td><%= index + 1 %></td>
+                                                                <td>
+                                                                    <% if (item.heroImage) { %>
+                                                                        <img src="<%= item.heroImage %>" class="hero-thumb" alt="Hero">
+                                                                    <% } else { %>
+                                                                        -
+                                                                    <% } %>
+                                                                </td>
+                                                                <td><%= new Date(item.weekStartDate).toLocaleDateString('en-IN') %></td>
+                                                                <td class="title-cell">
+                                                                    <strong><%= item.title || 'N/A' %></strong>
+                                                                    
+                                                                </td>
+                                                                
+                                                                <td>
+                                                                    <span class="badge <%= item.isActive ? 'green' : 'red' %> white-text">
+                                                                        <%= item.isActive ? 'Active' : 'Inactive' %>
+                                                                    </span>
+                                                                </td>
+                                                                <td class="actions-column">
+                                                                    <a href="/admin/readings/weekly/edit/<%= item._id %>"
+                                                                       class="btn-floating waves-effect waves-light amber"
+                                                                       title="Edit">
+                                                                        <i class="material-icons">edit</i>
+                                                                    </a>
+                                                                    &nbsp;&nbsp;
+                                                                    <a href="/admin/readings/weekly/delete/<%= item._id %>"
+                                                                       class="btn-floating waves-effect waves-light red deleteReading"
+                                                                       title="Delete">
+                                                                        <i class="material-icons">delete</i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="7" class="center-align grey-text">
+                                                                No Weekly Readings Found. Click the button above to create your first Weekly Reading.
+                                                            </td>
+                                                        </tr>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('_layouts/commonJs') %>
+
+    <script src="/app-assets/vendors/data-tables/js/jquery.dataTables.min.js"></script>
+    <script src="/app-assets/js/scripts/data-tables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Row Clickable → Edit page
+            document.querySelectorAll('tr.reading-row').forEach(row => {
+                row.addEventListener('click', function (e) {
+                    if (e.target.closest('.actions-column')) return;
+                    const href = this.getAttribute('data-href');
+                    if (href) window.location.href = href;
+                });
+            });
+
+            // Delete confirmation
+            $(".deleteReading").click(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let url = $(this).attr("href");
+                if (confirm("Are you sure you want to delete this Weekly Reading?")) {
+                    window.location = url;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

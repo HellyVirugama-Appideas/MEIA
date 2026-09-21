@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+        <title>
+            <%= title %>
+        </title>
+</head>
+
+<body
+    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+    data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+        <div id="main">
+
+            <div class="row">
+                <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="col s12 m6">
+                                <h6 class="breadcrumbs-title">
+                                    <span>
+                                        <%= title %>
+                                    </span>
+                                </h6>
+                            </div>
+
+                            <div class="col s12 m6 right-align-md">
+                                <ol class="breadcrumbs mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="/admin">Dashboard</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="/admin/celestial/zodiac-signs">Zodiac Sign Content</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">
+                                        <%= title %>
+                                    </li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container pl-2 pr-2">
+
+                <%- include('messages',{messages:messages}) %>
+
+                    <div class="card">
+                        <div class="card-content">
+
+                            <% if (availableSigns.length === 0) { %>
+                                <p class="grey-text">
+                                    All 12 zodiac signs already have content. Edit an existing one from the list instead.
+                                </p>
+                                <a href="/admin/celestial/zodiac-signs" class="btn red">Back to List</a>
+                            <% } else { %>
+
+                                <form method="POST" action="/admin/celestial/zodiac-signs" enctype="multipart/form-data">
+
+                                    <div class="row">
+
+                                        <div class="input-field col s12 m6">
+                                            <select name="signName" required>
+                                                <option value="" disabled selected>Choose a sign</option>
+                                                <% availableSigns.forEach(function(name){ %>
+                                                    <option value="<%= name %>"><%= name %></option>
+                                                <% }) %>
+                                            </select>
+                                            <label>Sign</label>
+                                        </div>
+
+                                        <div class="input-field col s12 m6">
+                                            <select name="isActive">
+                                                <option value="true" selected>Active</option>
+                                                <option value="false">Inactive</option>
+                                            </select>
+                                            <label>Status</label>
+                                        </div>
+
+                                        <div class="file-field input-field col s12">
+                                            <div class="btn theme-bg-primary">
+                                                <span>Choose Icon</span>
+                                                <input type="file" name="icon" accept="image/*">
+                                            </div>
+                                            <div class="file-path-wrapper">
+                                                <input class="file-path validate" type="text" placeholder="Upload sign icon (jpg, png, webp)">
+                                            </div>
+                                        </div>
+
+                                        <div class="input-field col s12">
+                                            <textarea class="materialize-textarea" name="description"
+                                                required></textarea>
+                                            <label class="active">Description (e.g. "You are naturally diplomatic,
+                                                charming and driven by harmony and balance.")</label>
+                                        </div>
+
+                                        <div class="col s12 right-align">
+                                            <button type="submit" class="btn">Create</button>
+                                            <a href="/admin/celestial/zodiac-signs" class="btn red">Cancel</a>
+                                        </div>
+
+                                    </div>
+                                </form>
+
+                            <% } %>
+
+                        </div>
+                    </div>
+
+            </div>
+
+        </div>
+
+        <%- include('_layouts/commonJs') %>
+
+            <script>
+                $(document).ready(function () {
+                    $('select').formSelect();
+                    M.updateTextFields();
+                    M.textareaAutoResize($('textarea'));
+                });
+            </script>
+
+</body>
+
+</html>

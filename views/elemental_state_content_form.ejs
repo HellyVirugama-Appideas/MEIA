@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+        <title>
+            <%= title %>
+        </title>
+</head>
+
+<body
+    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+    data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+        <div id="main">
+
+            <div class="row">
+                <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="col s12 m6">
+                                <h6 class="breadcrumbs-title">
+                                    <span>
+                                        <%= title %>
+                                    </span>
+                                </h6>
+                            </div>
+
+                            <div class="col s12 m6 right-align-md">
+                                <ol class="breadcrumbs mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="/admin">Dashboard</a>
+                                    </li>
+                                    <li class="breadcrumb-item">
+                                        <a href="/admin/rhythm/elemental-states">Elemental State Content</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">
+                                        <%= title %>
+                                    </li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container pl-2 pr-2">
+
+                <%- include('messages',{messages:messages}) %>
+
+                    <div class="card">
+                        <div class="card-content">
+
+                            <form method="POST" enctype="multipart/form-data"
+                                action="/admin/rhythm/elemental-states/<%= element._id %>">
+
+                                <div class="row">
+
+                                    <div class="input-field col s12 m6">
+                                        <input type="text" value="<%= element.element %>" disabled>
+                                        <label class="active">Element (fixed)</label>
+                                    </div>
+
+                                    <div class="input-field col s12 m6">
+                                        <select name="isActive">
+                                            <option value="true" <%= element.isActive ? 'selected' : '' %>>Active
+                                            </option>
+                                            <option value="false" <%= !element.isActive ? 'selected' : '' %>>
+                                                Inactive</option>
+                                        </select>
+                                        <label>Status</label>
+                                    </div>
+
+                                    <div class="file-field input-field col s12">
+                                        <div class="btn">
+                                            <span>Image</span>
+                                            <input type="file" name="image" accept="image/*">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text"
+                                                placeholder="Upload Element Image">
+                                        </div>
+                                    </div>
+
+                                    <% if(element.image){ %>
+                                        <div class="col s12">
+                                            <img src="<%= element.image %>"
+                                                style="width:180px;border-radius:10px">
+                                        </div>
+                                        <% } %>
+
+                                            <div class="input-field col s12">
+                                                <input type="text" name="title" required
+                                                    value="<%= element.title %>">
+                                                <label class="active">Title (e.g. "Grounded Earth")</label>
+                                            </div>
+
+                                            <div class="input-field col s12">
+                                                <textarea class="materialize-textarea" name="description"
+                                                    required><%= element.description %></textarea>
+                                                <label class="active">Description</label>
+                                            </div>
+
+                                            <div class="col s12 right-align">
+                                                <button type="submit" class="btn">Update</button>
+                                                <a href="/admin/rhythm/elemental-states" class="btn red">Cancel</a>
+                                            </div>
+
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+            </div>
+
+        </div>
+
+        <%- include('_layouts/commonJs') %>
+
+            <script>
+                $(document).ready(function () {
+                    $('select').formSelect();
+                    M.updateTextFields();
+                    M.textareaAutoResize($('textarea'));
+                });
+            </script>
+
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/content/ritual">Ritual Content</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-content">
+                            <form method="POST"
+                                  action="<%= step ? '/admin/content/ritual/' + step._id : '/admin/content/ritual' %>"
+                                  enctype="multipart/form-data">
+                                <div class="input-field col s12 m6">
+                                    <!-- <label for="type">Step Type</label> -->
+                                    <select id="type" name="type" required>
+                                        <option value="gratitude_prompt" <%= step && step.type === 'gratitude_prompt' ? 'selected' : '' %>>Gratitude Prompt</option>
+                                        <option value="reflection_prompt" <%= step && step.type === 'reflection_prompt' ? 'selected' : '' %>>Reflection Prompt</option>
+                                        <option value="tomorrows_intention" <%= step && step.type === 'tomorrows_intention' ? 'selected' : '' %>>Tomorrow's Intention</option>
+                                        <option value="guided_breathing" <%= step && step.type === 'guided_breathing' ? 'selected' : '' %>>Guided Breathing Exercise</option>
+                                        <option value="evening_journaling" <%= step && step.type === 'evening_journaling' ? 'selected' : '' %>>Evening Journaling</option>
+                                        <option value="gentle_playlist" <%= step && step.type === 'gentle_playlist' ? 'selected' : '' %>>Gentle Playlist</option>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <label for="order" class="active">Order</label>
+                                    <input id="order" name="order" type="number" value="<%= step ? step.order : 0 %>">
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="title" class="active">Title</label>
+                                    <input id="title" name="title" type="text" value="<%= step ? step.title : '' %>" required>
+                                </div>
+                                <div class="input-field col s12">
+                                    <label for="subtitle" class="active">Subtitle / Prompt Question</label>
+                                    <input id="subtitle" name="subtitle" type="text" value="<%= step ? step.subtitle || '' : '' %>">
+                                </div>
+
+                                <div class="col s12" style="margin: 15px 0;">
+                                    <label>Step Image</label><br>
+                                    <% if (step && step.image) { %>
+                                        <div style="margin: 10px 0;">
+                                            <img src="<%= step.image %>" alt="Current image" style="max-width: 150px; max-height: 150px; border-radius: 8px; display:block; margin-bottom: 8px;">
+                                            <small>Current image (upload a new file below to replace it)</small>
+                                        </div>
+                                    <% } %>
+                                    <input type="file" name="image" accept="image/*">
+                                </div>
+
+                                <p><strong>Breathing timing (only used if type = Guided Breathing)</strong></p>
+                                <div class="input-field col s12 m4">
+                                    <label for="inhaleSeconds" class="active">Inhale (sec)</label>
+                                    <input id="inhaleSeconds" name="inhaleSeconds" type="number" value="<%= step && step.breathing ? step.breathing.inhaleSeconds : 4 %>">
+                                </div>
+                                <div class="input-field col s12 m4">
+                                    <label for="holdSeconds" class="active">Hold (sec)</label>
+                                    <input id="holdSeconds" name="holdSeconds" type="number" value="<%= step && step.breathing ? step.breathing.holdSeconds : 7 %>">
+                                </div>
+                                <div class="input-field col s12 m4">
+                                    <label for="exhaleSeconds" class="active">Exhale (sec)</label>
+                                    <input id="exhaleSeconds" name="exhaleSeconds" type="number" value="<%= step && step.breathing ? step.breathing.exhaleSeconds : 8 %>">
+                                </div>
+
+                                <div class="col s12" style="margin: 10px 0;">
+                                    <label>
+                                        <input type="checkbox" name="isActive" <%= (!step || step.isActive) ? 'checked' : '' %> />
+                                        <span>Active (visible in app)</span>
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col s12 display-flex justify-content-end">
+                                        <button class="btn btn-edit" type="submit"><%= step ? 'Update' : 'Save' %></button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-delete" href="/admin/content/ritual">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>$(document).ready(function () { $('select').formSelect(); M.updateTextFields(); });</script>
+</body>
+</html>

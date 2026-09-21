@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+
+        <title>
+            <%= title %>
+        </title>
+
+        <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css"
+            href="/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="/app-assets/css/pages/data-tables.css">
+
+        <style>
+            table tr td,
+            th {
+                text-align: center;
+            }
+
+            .name-cell {
+                max-width: 240px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                text-align: left !important;
+            }
+
+            tr.symptom-row {
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            tr.symptom-row:hover {
+                background-color: #f5f5f5 !important;
+            }
+
+            td.actions-column {
+                cursor: default;
+            }
+
+            td.actions-column a {
+                pointer-events: auto !important;
+            }
+        </style>
+</head>
+
+<body
+    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+    data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+        <div id="main">
+
+            <!-- Breadcrumbs -->
+            <div class="row">
+
+                <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+
+                    <div class="container">
+
+                        <div class="row">
+
+                            <div class="col s12 m6">
+
+                                <h6 class="breadcrumbs-title">
+                                    <span>
+                                        <%= title %>
+                                    </span>
+                                </h6>
+
+                            </div>
+
+                            <div class="col s12 m6 right-align-md">
+
+                                <ol class="breadcrumbs mb-0">
+
+                                    <li class="breadcrumb-item">
+                                        <a href="/admin">
+                                            Dashboard
+                                        </a>
+                                    </li>
+
+                                    <li class="breadcrumb-item active">
+                                        Physical Symptom Options
+                                    </li>
+
+                                </ol>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="breadcrumbs-wrapper" style="background-color: white;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 right-align-md">
+                            <a href="/admin/rhythm/symptom-options/add"
+                                class="btn pull-right btn-add btn-breadcrumbs white-text">
+                                <i class="material-icons left">add</i>Add Symptom Option
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+
+            <div class="col s12">
+                <div class="container">
+                    <div class="section section-data-tables">
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="row">
+                                            <div class="col s12 overflow">
+
+                                                <table id="page-length-option" class="display">
+
+                                                    <thead>
+                                                        
+                                                        <tr>
+                                                            <th>Sr</th>
+
+                                                            <th>
+                                                                Order
+                                                            </th>
+
+                                                            <th>
+                                                                Icon
+                                                            </th>
+
+                                                            <th>
+                                                                Name
+                                                            </th>
+
+                                                            <th>
+                                                                Status
+                                                            </th>
+
+                                                            <th>
+                                                                Actions
+                                                            </th>
+
+                                                        </tr>
+
+                                                    </thead>
+
+
+                                                    <tbody>
+
+                                                        <% if (options && options.length) { %>
+
+
+                                                            <% options.forEach(function(opt,index) { %>
+
+                                                                <tr class="symptom-row"
+                                                                    data-href="/admin/rhythm/symptom-options/edit/<%= opt._id %>">
+
+
+                                                                    <!-- Order -->
+                                                                    <td>
+                                                                        <%= index + 1 + ((typeof pagination
+                                                                            !=='undefined' && pagination?.page) ?
+                                                                            (pagination.page - 1) * (pagination.limit ||
+                                                                            25) : 0) %>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <%= opt.order %>
+                                                                    </td>
+
+
+                                                                    <!-- Icon -->
+
+                                                                    <td>
+
+                                                                        <% if (opt.icon) { %>
+
+                                                                            <img src="<%= opt.icon %>"
+                                                                                alt="<%= opt.name %>" style="
+                                                                                width:50px;
+                                                                                height:50px;
+                                                                                object-fit:contain;
+                                                                                border:1px solid #ddd;
+                                                                                border-radius:6px;
+                                                                                padding:4px;
+                                                                                background:#fff;
+                                                                            ">
+
+                                                                            <% } else { %>
+
+                                                                                <span>
+                                                                                    —
+                                                                                </span>
+
+                                                                                <% } %>
+
+                                                                    </td>
+
+
+                                                                    <!-- Name -->
+
+                                                                    <td class="name-cell" title="<%= opt.name %>">
+                                                                        <%= opt.name %>
+                                                                    </td>
+
+
+                                                                    <!-- Status -->
+
+                                                                    <td>
+
+                                                                        <% if (opt.isActive) { %>
+
+                                                                            <span class="badge green white-text">
+                                                                                Active
+                                                                            </span>
+
+                                                                            <% } else { %>
+
+                                                                                <span class="badge red white-text">
+                                                                                    Inactive
+                                                                                </span>
+
+                                                                                <% } %>
+
+                                                                    </td>
+
+
+                                                                    <!-- Actions -->
+
+                                                                    <td class="actions-column">
+
+                                                                        <a href="/admin/rhythm/symptom-options/edit/<%= opt._id %>"
+                                                                            class="waves-effect waves-light accent-2 btn-edit"
+                                                                            title="Edit">
+
+                                                                            <i class="material-icons">
+                                                                                edit
+                                                                            </i>
+
+                                                                        </a>
+
+                                                                        &nbsp;&nbsp;
+
+                                                                        <a href="/admin/rhythm/symptom-options/delete/<%= opt._id %>"
+                                                                            class="btn-floating waves-effect waves-light red"
+                                                                            title="Delete"
+                                                                            onclick="return confirm('Delete this symptom option?')">
+
+                                                                            <i class="material-icons">
+                                                                                delete
+                                                                            </i>
+
+                                                                        </a>
+
+                                                                    </td>
+
+
+                                                                </tr>
+
+                                                                <% }) %>
+
+
+                                                                    <% } else { %>
+
+
+                                                                        <tr>
+
+                                                                            <td colspan="5"
+                                                                                class="center-align grey-text">
+
+                                                                                No symptom options found.
+
+                                                                            </td>
+
+                                                                        </tr>
+
+
+                                                                        <% } %>
+
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <%- include('_layouts/commonJs') %>
+
+            <script src="/app-assets/vendors/data-tables/js/jquery.dataTables.min.js"></script>
+            <script src="/app-assets/js/scripts/data-tables.js"></script>
+
+</body>
+
+</html>

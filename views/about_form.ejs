@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title>About Page | <%= title %></title>
+</head>
+
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+        <div class="row">
+            <div id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6">
+                            <h5 class="breadcrumbs-title"><span>About Page</span></h5>
+                        </div>
+                        <div class="col s12 m6 l6 right-align-md">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item active">About Page</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12">
+                <div class="container">
+                    <div class="section">
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <%- include('messages', { messages: messages }) %>
+
+                                        <form method="POST" id="form" enctype="multipart/form-data" action="/admin/about">
+
+                                            <h4 class="card-title">About Page Content</h4>
+
+                                            <!-- ===== Hero Image (pehle jaisa) ===== -->
+                                            <div class="row">
+                                                <div class="file-field input-field col s12">
+                                                    <div class="btn">
+                                                        <span>Hero Image</span>
+                                                        <input type="file" name="heroImage" id="heroImage" accept="image/*">
+                                                    </div>
+                                                    <div class="file-path-wrapper">
+                                                        <input class="file-path validate" type="text"
+                                                               placeholder="Upload Hero Image" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <% if (about && about.heroImage) { %>
+                                                    <div class="col s12" style="margin-bottom:15px;">
+                                                        <img src="<%= about.heroImage %>"
+                                                             style="width:180px;border-radius:10px">
+                                                    </div>
+                                                <% } %>
+                                            </div>
+
+                                            <!-- ===== Title ===== -->
+                                            <div class="input-field">
+                                                <input placeholder="Title" id="title" name="title" type="text" required
+                                                       value="<%= about?.title || '' %>">
+                                                <label for="title" class="active">Title</label>
+                                            </div>
+
+                                            <!-- ===== Description ===== -->
+                                            <div class="form-group mt-3">
+                                                <label>Description</label>
+                                                <textarea name="description" id="descriptionEditor" rows="10"
+                                                          required><%= about?.description || '' %></textarea>
+                                            </div>
+
+                                            <!-- ===== Info Cards (icon = image upload) ===== -->
+                                            <div class="col s12" style="margin-top:20px;">
+                                                <h6>Info Cards</h6>
+
+                                                <input type="hidden" name="totalCardSlots" id="totalCardSlots"
+                                                    value="<%= (about && about.infoCards && about.infoCards.length) ? about.infoCards.length : 1 %>">
+
+                                                <div id="cardsContainer">
+                                                    <% const cards = about && about.infoCards && about.infoCards.length
+                                                        ? about.infoCards
+                                                        : [{ icon: "", title: "", description: "" }]; %>
+
+                                                    <% cards.forEach(function(item, idx){ %>
+                                                        <div class="row card-item">
+
+                                                            <div class="col s3">
+                                                                <label class="active" style="display:block;">Icon</label>
+
+                                                                <div class="card-icon-preview-wrap" data-index="<%= idx %>"
+                                                                    style="cursor:pointer;width:60px;height:60px;border:1px solid #9e9e9e;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                                                    <% if (item.icon) { %>
+                                                                        <img class="card-icon-preview" src="<%= item.icon %>"
+                                                                            style="width:100%;height:100%;object-fit:cover;">
+                                                                    <% } else { %>
+                                                                        <i class="material-icons card-icon-placeholder" style="color:#9e9e9e;">add_photo_alternate</i>
+                                                                        <img class="card-icon-preview" src=""
+                                                                            style="width:100%;height:100%;object-fit:cover;display:none;">
+                                                                    <% } %>
+                                                                </div>
+
+                                                                <input type="file" class="card-icon-input" name="cardIcon_<%= idx %>"
+                                                                    accept="image/*" style="display:none;">
+                                                                <input type="hidden" name="cardIconExisting_<%= idx %>" value="<%= item.icon %>">
+                                                            </div>
+
+                                                            <div class="input-field col s4">
+                                                                <input type="text" name="cardTitle_<%= idx %>" value="<%= item.title %>">
+                                                                <label class="active">Card Title</label>
+                                                            </div>
+
+                                                            <div class="input-field col s4">
+                                                                <textarea class="materialize-textarea"
+                                                                    name="cardDescription_<%= idx %>"><%= item.description %></textarea>
+                                                                <label class="active">Card Description</label>
+                                                            </div>
+
+                                                            <div class="col s1" style="margin-top:20px">
+                                                                <a href="javascript:void(0)" class="btn red removeCard">
+                                                                    <i class="material-icons">remove</i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    <% }) %>
+                                                </div>
+
+                                                <a class="btn blue" id="addCard">Add Info Card</a>
+                                                <hr>
+                                            </div>
+
+                                            <!-- ===== CTA Section ===== -->
+                                            <div class="col s12">
+                                                <h6>CTA Section</h6>
+
+                                                <div class="input-field col s12">
+                                                    <input type="text" name="ctaTitle"
+                                                        value="<%= about && about.ctaSection ? about.ctaSection.title : '' %>">
+                                                    <label class="active">CTA Title</label>
+                                                </div>
+
+                                                <div class="input-field col s12">
+                                                    <textarea class="materialize-textarea"
+                                                        name="ctaDescription"><%= about && about.ctaSection ? about.ctaSection.description : '' %></textarea>
+                                                    <label class="active">CTA Description</label>
+                                                </div>
+
+                                                <div class="input-field col s12 m6">
+                                                    <input type="text" name="ctaButtonText"
+                                                        value="<%= about && about.ctaSection && about.ctaSection.buttonText ? about.ctaSection.buttonText : 'Book A Reading' %>">
+                                                    <label class="active">CTA Button Text</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- ===== Status ===== -->
+                                            <div class="input-field col s12 m6">
+                                                <select name="isActive">
+                                                    <option value="true" <%= !about || about.isActive ? "selected" : "" %>>Active</option>
+                                                    <option value="false" <%= about && !about.isActive ? "selected" : "" %>>Inactive</option>
+                                                </select>
+                                                <label>Status</label>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <button type="submit" id="submitBtn" class="btn purple">Save About Page</button>
+                                               
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('_layouts/commonJs') %>
+
+    <script src="//cdn.ckeditor.com/4.7.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('descriptionEditor', {
+            height: 300,
+            versionCheck: false
+        });
+
+        $(document).ready(function () {
+
+            $('select').formSelect();
+            M.updateTextFields();
+            M.textareaAutoResize($('textarea'));
+
+            // Hero image file dialog fix (Materialize)
+            $('.file-field .btn').on('click', function () {
+                var $input = $(this).find('input[type="file"]');
+                if ($input.length) $input.trigger('click');
+            });
+            $('.file-field input[type="file"]').on('click', function (e) {
+                e.stopPropagation();
+            });
+
+            /* ===== Card Icon only ===== */
+            $(document).on('click', '.card-icon-preview-wrap', function () {
+                $(this).siblings('.card-icon-input').trigger('click');
+            });
+
+            $(document).on('change', '.card-icon-input', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const $wrap = $(this).closest('.col.s3');
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    $wrap.find('.card-icon-preview').attr('src', ev.target.result).show();
+                    $wrap.find('.card-icon-placeholder').hide();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            let cardIndex = parseInt($('#totalCardSlots').val(), 10) || 1;
+
+            $("#addCard").click(function () {
+                const i = cardIndex;
+
+                $("#cardsContainer").append(`
+<div class="row card-item">
+<div class="col s3">
+<label class="active" style="display:block;">Icon</label>
+<div class="card-icon-preview-wrap" data-index="${i}"
+style="cursor:pointer;width:60px;height:60px;border:1px solid #9e9e9e;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+<i class="material-icons card-icon-placeholder" style="color:#9e9e9e;">add_photo_alternate</i>
+<img class="card-icon-preview" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+</div>
+<input type="file" class="card-icon-input" name="cardIcon_${i}" accept="image/*" style="display:none;">
+<input type="hidden" name="cardIconExisting_${i}" value="">
+</div>
+<div class="input-field col s4">
+<input type="text" name="cardTitle_${i}">
+<label>Card Title</label>
+</div>
+<div class="input-field col s4">
+<textarea class="materialize-textarea" name="cardDescription_${i}"></textarea>
+<label>Card Description</label>
+</div>
+<div class="col s1" style="margin-top:20px">
+<a href="javascript:void(0)" class="btn red removeCard">
+<i class="material-icons">remove</i>
+</a>
+</div>
+</div>
+`);
+
+                cardIndex++;
+                $('#totalCardSlots').val(cardIndex);
+                M.updateTextFields();
+                M.textareaAutoResize($('textarea'));
+            });
+
+            $(document).on("click", ".removeCard", function () {
+                $(this).closest(".card-item").remove();
+            });
+        });
+    </script>
+</body>
+</html>
