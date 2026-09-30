@@ -1,7 +1,7 @@
 const Journal = require("../../models/Journal");
 const RitualStep = require("../../models/RitualStep");
 const RitualCompletion = require("../../models/RitualCompletion");
-const JournalCategory = require("../../models/JournalCategory");
+const JournalCategory = require("../../models/Journalcategory");
 const { success, error } = require("../../utils/response");
 const SavedItem = require("../../models/SavedItem"); // path adjust kar lena
 
