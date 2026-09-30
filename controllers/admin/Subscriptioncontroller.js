@@ -5,7 +5,7 @@ const {
   syncStripeProductAndPrice,
   archiveStripeProductAndPrice,
   SUPPORTED_CURRENCIES,
-} = require("../../utils/stripePlanHelpers");
+} = require("../../utils/Stripeplanhelpers");
 
 /* ===================== SUBSCRIPTION PLANS ===================== */
 exports.listPlans = async (req, res) => {
