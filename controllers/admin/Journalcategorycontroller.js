@@ -1,4 +1,4 @@
-const JournalCategory = require("../../models/JournalCategory");
+const JournalCategory = require("../../models/Journalcategory");
 
 /* ============================================================
    JOURNAL CATEGORIES -> full CRUD (admin adds freely, not fixed)
