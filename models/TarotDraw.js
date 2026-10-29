@@ -15,6 +15,8 @@ const TarotDrawSchema = new mongoose.Schema(
         required: true,
       },
     ],
+        cards: [{ type: mongoose.Schema.Types.ObjectId, ref: "TarotCard" }],
+
     date: {
       type: Date,
       required: true,

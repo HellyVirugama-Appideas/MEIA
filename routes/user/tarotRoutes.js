@@ -6,7 +6,7 @@ const { getTodayCard, shuffleAndDraw, getAllCards, selectCard } = require("../..
 
 router.get("/cards", protect, getAllCards);
 router.post("/select", protect, selectCard);
-// router.get("/today", protect, getTodayCard);
+router.get("/today", protect, getTodayCard);
 // router.post("/shuffle", protect, shuffleAndDraw);
 
 module.exports = router;

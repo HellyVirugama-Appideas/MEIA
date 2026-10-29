@@ -50,34 +50,33 @@ exports.selectCard = async (req, res, next) => {
     const today = startOfToday();
     const risingSign = await getRisingSignCard(req.user);
 
-    if (!cardId) {
-      return error(res, "cardId is required.", 400);
-    }
+    if (!cardId) return error(res, "cardId is required.", 400);
 
-    // Already selected today?
-    const existing = await TarotDraw.findOne({ user: req.user._id, date: today }).populate("card");
-    if (existing) {
-      return success(res, "You've already selected a card today.", {
-        cards: existing.cards,
-        risingSign,
-      });
-    }
+    const settings = await TarotSettings.findOne();
+    const maxCards = settings?.cardsPerDraw || 2;
 
     const card = await TarotCard.findOne({ _id: cardId, isActive: true });
-    if (!card) {
-      return error(res, "Card not found or inactive.", 404);
+    if (!card) return error(res, "Card not found or inactive.", 404);
+
+    let draw = await TarotDraw.findOne({ user: req.user._id, date: today });
+
+    if (draw) {
+      if (draw.cards.map(String).includes(String(card._id))) {
+        await draw.populate("cards");
+        return success(res, "Card already selected.", { cards: draw.cards, risingSign });
+      }
+      if (draw.cards.length >= maxCards) {
+        await draw.populate("cards");
+        return error(res, `You can select maximum ${maxCards} card(s) per day.`, 400);
+      }
+      draw.cards.push(card._id);
+      await draw.save();
+    } else {
+      draw = await TarotDraw.create({ user: req.user._id, cards: [card._id], date: today });
     }
 
-    await TarotDraw.create({
-      user: req.user._id,
-      cards: [card._id],
-      date: today,
-    });
-
-    return success(res, "Card selected successfully.", {
-      cards: [card],
-      risingSign,
-    }, 201);
+    await draw.populate("cards");
+    return success(res, "Card selected successfully.", { cards: draw.cards, risingSign }, 201);
   } catch (err) {
     next(err);
   }
