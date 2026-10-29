@@ -6,13 +6,15 @@ const createUploader = require("../../middleware/upload");
 const upload = createUploader("moon-phases");
 const uploadZodiac = createUploader("zodiac-signs");
 const uploadPlanet = createUploader("planets");
+// const upload = require("../../middleware/upload"); // agar already import hai to dobara mat likho
+
 
 const MODULE = "content";
 
 /* ===================== MOON PHASE INFO ===================== */
 router.get("/moon-phases", requireAdminAuth, checkPermission(MODULE, "isView"), celestialContentController.listMoonPhases);
 router.get("/moon-phases/edit/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), celestialContentController.editMoonPhaseForm);
-router.post("/moon-phases/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), celestialContentController.updateMoonPhase);
+router.post("/moon-phases/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), upload.single("image"), celestialContentController.updateMoonPhase);
 
 /* ===================== PLANETS ===================== */
 router.get("/planets", requireAdminAuth, checkPermission(MODULE, "isView"), celestialContentController.listPlanets);

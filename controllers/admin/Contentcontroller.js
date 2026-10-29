@@ -45,20 +45,53 @@ exports.editMoonPhaseForm = async (req, res) => {
   });
 };
 
+// exports.updateMoonPhase = async (req, res) => {
+//   const { description, guideContent, keywords } = req.body;
+//   await MoonPhaseInfo.findByIdAndUpdate(req.params.id, {
+//     description,
+//     guideContent,
+//     // Was previously dropped entirely - this is why Home's
+//     // moonPhase.keywords always came back as [] regardless of what
+//     // was typed in the admin form (the form had no field for it either).
+//     keywords: keywords
+//       ? keywords.split(",").map((k) => k.trim()).filter(Boolean)
+//       : [],
+//   });
+//   req.flash("success", "Moon phase content updated!");
+//   res.redirect("/admin/content/moon-phases");
+// };
+
 exports.updateMoonPhase = async (req, res) => {
-  const { description, guideContent, keywords } = req.body;
-  await MoonPhaseInfo.findByIdAndUpdate(req.params.id, {
-    description,
-    guideContent,
-    // Was previously dropped entirely - this is why Home's
-    // moonPhase.keywords always came back as [] regardless of what
-    // was typed in the admin form (the form had no field for it either).
-    keywords: keywords
-      ? keywords.split(",").map((k) => k.trim()).filter(Boolean)
-      : [],
-  });
-  req.flash("success", "Moon phase content updated!");
-  res.redirect("/admin/content/moon-phases");
+  try {
+    const { description, guideContent, keywords } = req.body;
+
+    const updateData = {
+      description,
+      guideContent,
+      keywords: keywords
+        ? keywords.split(",").map((k) => k.trim()).filter(Boolean)
+        : [],
+    };
+    // sirf tab overwrite karo jab nayi image upload hui ho
+    if (req.file) updateData.image = `/uploads/moonphase/${req.file.filename}`;
+
+    const updated = await MoonPhaseInfo.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updated) {
+      req.flash("error", "Moon phase not found.");
+      return res.redirect("/admin/content/moon-phases");
+    }
+
+    req.flash("success", "Moon phase content updated!");
+    res.redirect("/admin/content/moon-phases");
+  } catch (err) {
+    console.error("updateMoonPhase error:", err);
+    req.flash("error", "Failed to update moon phase.");
+    res.redirect(`/admin/content/moon-phases/edit/${req.params.id}`);
+  }
 };
 
 /* ===================== PLANETS ===================== */
