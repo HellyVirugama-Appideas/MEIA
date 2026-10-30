@@ -1374,8 +1374,8 @@ exports.logPeriod = async (req, res, next) => {
     if (!startDate) return error(res, "Start date is required.", 422);
 
     // Schema ke exact enum ke sath match (Light / Medium / Heavy)
-    if (flow && !["Light", "Medium", "Heavy"].includes(flow)) {
-      return error(res, "Flow must be one of: Light, Medium, Heavy.", 422);
+    if (flow && !["Heavy", "Spot", "Light"].includes(flow)) {
+      return error(res, "Flow must be one of: Light, Spot, Heavy.", 422);
     }
 
     const periodLog = await PeriodLog.create({
