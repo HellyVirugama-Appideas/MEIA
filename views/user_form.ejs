@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+    <style>
+        .form-section-title { font-size: 16px; font-weight: 700; margin: 10px 0 6px; padding-left: 10px; }
+        .form-section-title i { vertical-align: middle; margin-right: 6px; color: #9C27B0; }
+        .form-divider { margin: 18px 0 8px; border: 0; border-top: 1px solid #eee; }
+        .check-row { margin: 8px 0 14px; }
+    </style>
+</head>
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+    <%- include('_layouts/sidenavbar') %>
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/user/users">Users</a></li>
+                                <li class="breadcrumb-item active"><%= title %></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container pl-2 pr-2">
+            <%- include('messages', { messages: messages }) %>
+            <div class="card">
+                <div class="card-content">
+                    <form method="POST"
+                          action="<%= user ? '/admin/user/users/' + user._id + '/edit' : '/admin/user/users/create' %>">
+
+                        <!-- ============ Basic Info ============ -->
+                        <div class="row">
+                            <div class="form-section-title"><i class="material-icons">person</i>Basic Information</div>
+
+                            <div class="input-field col s12 m6">
+                                <label for="name" class="active">Name *</label>
+                                <input id="name" name="name" type="text" value="<%= user ? user.name || '' : '' %>" required>
+                            </div>
+                            <div class="input-field col s12 m6">
+                                <label for="email" class="active">Email</label>
+                                <input id="email" name="email" type="email" value="<%= user ? user.email || '' : '' %>">
+                            </div>
+
+                            <div class="input-field col s4 m2">
+                                <label for="countryCode" class="active">Code</label>
+                                <input id="countryCode" name="countryCode" type="text" value="<%= user ? user.countryCode || '+91' : '+91' %>">
+                            </div>
+                            <div class="input-field col s8 m4">
+                                <label for="phone" class="active">Phone *</label>
+                                <input id="phone" name="phone" type="text" maxlength="10" pattern="\d{10}"
+                                       title="10 digit phone number" value="<%= user ? user.phone || '' : '' %>" required>
+                            </div>
+
+                            <div class="input-field col s12 m6">
+                                <select id="status" name="status">
+                                    <option value="active" <%= !user || user.status !== 'blocked' ? 'selected' : '' %>>Active</option>
+                                    <option value="blocked" <%= user && user.status === 'blocked' ? 'selected' : '' %>>Blocked</option>
+                                </select>
+                                <label for="status">Status</label>
+                            </div>
+
+                            <div class="col s12 check-row">
+                                <label style="margin-right: 30px;">
+                                    <input type="checkbox" name="isPhoneVerified" <%= user && user.isPhoneVerified ? 'checked' : '' %> />
+                                    <span>Phone Verified</span>
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="isProfileComplete" <%= user && user.isProfileComplete ? 'checked' : '' %> />
+                                    <span>Profile Complete</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- ============ Birth Info ============ -->
+                        <div class="row">
+                            <div class="form-section-title"><i class="material-icons">cake</i>Birth Information</div>
+
+                            <div class="input-field col s12 m4">
+                                <label for="dateOfBirth" class="active">Date of Birth</label>
+                                <input id="dateOfBirth" name="dateOfBirth" type="date"
+                                       value="<%= user && user.birthInfo && user.birthInfo.dateOfBirth ? new Date(user.birthInfo.dateOfBirth).toISOString().slice(0, 10) : '' %>">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="birthTime" class="active">Birth Time</label>
+                                <input id="birthTime" name="birthTime" type="time"
+                                       value="<%= user && user.birthInfo ? user.birthInfo.birthTime || '' : '' %>">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="birthPlace" class="active">Birth Place</label>
+                                <input id="birthPlace" name="birthPlace" type="text"
+                                       value="<%= user && user.birthInfo ? user.birthInfo.birthPlace || '' : '' %>">
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- ============ Cycle Info ============ -->
+                        <div class="row">
+                            <div class="form-section-title"><i class="material-icons">favorite</i>Cycle Information</div>
+
+                            <div class="input-field col s12 m4">
+                                <label for="lastPeriodDate" class="active">Last Period Date</label>
+                                <input id="lastPeriodDate" name="lastPeriodDate" type="date"
+                                       value="<%= user && user.cycleInfo && user.cycleInfo.lastPeriodDate ? new Date(user.cycleInfo.lastPeriodDate).toISOString().slice(0, 10) : '' %>">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="averageCycleLength" class="active">Average Cycle Length (days)</label>
+                                <input id="averageCycleLength" name="averageCycleLength" type="number" min="15" max="60"
+                                       value="<%= user && user.cycleInfo ? user.cycleInfo.averageCycleLength || '' : '' %>">
+                            </div>
+                            <div class="input-field col s12 m4">
+                                <label for="averagePeriodLength" class="active">Average Period Length (days)</label>
+                                <input id="averagePeriodLength" name="averagePeriodLength" type="number" min="1" max="15"
+                                       value="<%= user && user.cycleInfo ? user.cycleInfo.averagePeriodLength || '' : '' %>">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col s12 display-flex justify-content-end">
+                                <button class="btn btn-edit" type="submit"><%= user ? 'Update' : 'Save' %></button>
+                                &nbsp;&nbsp;
+                                <a class="btn btn-delete" href="<%= user ? '/admin/user/users/' + user._id : '/admin/user/users' %>">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('_layouts/commonJs') %>
+    <script>
+        $(document).ready(function () {
+            $('select').formSelect();
+            M.updateTextFields();
+        });
+    </script>
+</body>
+</html>

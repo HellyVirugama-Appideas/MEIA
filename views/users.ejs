@@ -100,8 +100,8 @@
                 <div class="container">
                     <div class="row">
                         <div class="col s12 right-align-md">
-                            <a class="btn pull-right btn-add btn-breadcrumbs white-text"
-                                href="/admin/users/create">Add New User</a>
+                           <a class="btn pull-right btn-add btn-breadcrumbs white-text"
+   href="/admin/user/users/create">Add New User</a>
                         </div>
                     </div>
                 </div>
@@ -134,10 +134,7 @@
                                                                 <!-- Clickable row -->
                                                                 <tr class="user-row"
                                                                     data-href="/admin/user/users/<%= user._id %>">
-                                                                    <td>
-                                                                        <%= index + 1 + ((pagination?.page - 1) *
-                                                                            (pagination?.limit || 25) || 0) %>
-                                                                    </td>
+                                                                   <td><%= index + 1 %></td>
 
                                                                     <td class="name-cell" title="<%= user.name %>">
                                                                         <%= user.name || 'N/A' %>
@@ -169,11 +166,10 @@
                                                                             <i class="material-icons">visibility</i>
                                                                         </a>
                                                                         &nbsp;&nbsp;
-                                                                        <a href="/admin/users/<%= user._id %>/edit"
-                                                                            class="btn-floating waves-effect waves-light accent-2 btn-edit"
-                                                                            title="Edit">
-                                                                            <i class="material-icons">edit</i>
-                                                                        </a>
+                                                                        <a href="/admin/user/users/<%= user._id %>/edit"
+   class="waves-effect waves-light accent-2 btn-edit" title="Edit">
+    <i class="material-icons">edit</i>
+</a>
                                                                     </td>
                                                                 </tr>
                                                                 <% }) %>

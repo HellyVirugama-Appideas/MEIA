@@ -7,15 +7,89 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        .dash-sub { margin-top: 2px; font-size: 14px; }
+
+        /* ---------- Stat cards ---------- */
         .stat-card {
+            position: relative;
+            overflow: hidden;
             border-radius: 16px;
-            padding: 24px 20px;
-            color: white;
-            transition: all 0.3s;
+            padding: 20px 20px 18px;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: transform .25s ease, box-shadow .25s ease;
         }
-        .stat-card:hover { transform: translateY(-8px); }
-        .counter { font-size: 42px; font-weight: 800; margin: 0; }
-        .zodiac-icon { font-size: 32px; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 14px 28px rgba(0,0,0,.18); }
+        .stat-card .stat-icon {
+            position: absolute; right: 14px; top: 14px;
+            width: 42px; height: 42px; border-radius: 12px;
+            background: rgba(255,255,255,.2);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .stat-card .stat-icon i { font-size: 24px; color: #fff; }
+        .stat-card .counter { font-size: 36px; font-weight: 800; margin: 0 0 4px; line-height: 1.1; }
+        .stat-card .stat-label { font-size: 14px; opacity: .95; letter-spacing: .3px; }
+        .stat-card::after {
+            content: ""; position: absolute; right: -30px; bottom: -40px;
+            width: 110px; height: 110px; border-radius: 50%;
+            background: rgba(255,255,255,.1);
+        }
+
+        /* ---------- Panel cards ---------- */
+        .panel-card {
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.08) !important;
+            height: 100%;
+            margin: 0;
+        }
+        .panel-card .card-content { padding: 20px 22px; }
+        .panel-title {
+            font-size: 17px; font-weight: 700; margin: 0 0 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .panel-title i { font-size: 22px; color: #9C27B0; }
+
+        /* ---------- Cosmic energy (compact) ---------- */
+        .cosmic-body { display: flex; align-items: center; gap: 16px; }
+        .moon-circle {
+            flex: 0 0 72px; width: 72px; height: 72px; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ede7f6, #b39ddb);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 38px;
+            box-shadow: 0 0 0 6px rgba(156,39,176,.08);
+        }
+        .cosmic-info { min-width: 0; }
+        .cosmic-phase { font-size: 18px; font-weight: 700; margin: 0 0 6px; }
+        .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+        .mini-chip {
+            font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+            background: #f3e5f5; color: #7b1fa2;
+        }
+        .mini-chip.alt { background: #e3f2fd; color: #1565c0; }
+        .cosmic-desc {
+            font-size: 13px; color: #757575; margin: 0; line-height: 1.5;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        /* ---------- Zodiac list ---------- */
+        .zodiac-row { margin-bottom: 12px; }
+        .zodiac-row:last-child { margin-bottom: 0; }
+        .zodiac-head { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+        .zodiac-bar { height: 7px; border-radius: 10px; background: #f1e6f5; overflow: hidden; }
+        .zodiac-bar span {
+            display: block; height: 100%; border-radius: 10px;
+            background: linear-gradient(90deg, #ab47bc, #7b1fa2);
+        }
+
+        /* ---------- Chart ---------- */
+        .chart-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .chart-head .panel-title { margin: 0; }
+        .chart-wrap { height: 320px; position: relative; }
+
+        @media (max-width: 600px) {
+            .cosmic-body { flex-direction: column; text-align: center; }
+            .chip-row { justify-content: center; }
+        }
     </style>
 </head>
 
@@ -32,82 +106,103 @@
                     <%- include('messages', { messages: messages }) %>
 
                     <!-- Welcome -->
-                    <div class="section">
-                        <h4 class="welcome-text">Namaste, <%= adminName %> ✨</h4>
-                        <p class="grey-text">Today's Cosmic Overview</p>
+                    <div class="section" style="padding-bottom: 0;">
+                        <h4 class="welcome-text" style="margin-bottom: 0;">Namaste, <%= adminName %> ✨</h4>
+                        <p class="grey-text dash-sub">Today's Cosmic Overview</p>
                     </div>
 
                     <!-- Stats Cards -->
-                    <div class="row mt-2">
-                        <div class="col m3 s12" style="padding:10px;">
-                            <div class="stat-card" style="background: linear-gradient(135deg, #9C27B0, #6A1B9A);">
-                                <h4 class="counter white-text" data-target="<%= stats.newSignupsToday %>">0</h4>
-                                <span class="white-text" style="font-size:18px;">New Signups Today</span>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col m3 s6" style="padding:8px 10px;">
+                            <div class="stat-card" style="background: linear-gradient(135deg, #AB47BC, #6A1B9A);">
+                                <div class="stat-icon"><i class="material-icons">person_add</i></div>
+                                <h4 class="counter" data-target="<%= stats.newSignupsToday %>">0</h4>
+                                <span class="stat-label">New Signups Today</span>
                             </div>
                         </div>
-                        <div class="col m3 s12" style="padding:10px;">
-                            <div class="stat-card" style="background: linear-gradient(135deg, #FF5722, #E64A19);">
-                                <h4 class="counter white-text" data-target="<%= stats.activeSubscribers %>">0</h4>
-                                <span class="white-text" style="font-size:18px;">Active Subscribers</span>
+                        <div class="col m3 s6" style="padding:8px 10px;">
+                            <div class="stat-card" style="background: linear-gradient(135deg, #FF7043, #E64A19);">
+                                <div class="stat-icon">
+                                   <i class="material-icons">card_membership</i>
+                                </div>
+                                <h4 class="counter" data-target="<%= stats.activeSubscribers %>">0</h4>
+                                <span class="stat-label">Active Subscribers</span>
                             </div>
                         </div>
-                        <div class="col m3 s12" style="padding:10px;">
-                            <div class="stat-card" style="background: linear-gradient(135deg, #00BCD4, #0097A7);">
-                                <h4 class="counter white-text" data-target="<%= stats.tarotDrawsToday %>">0</h4>
-                                <span class="white-text" style="font-size:18px;">Tarot Draws Today</span>
+                        <div class="col m3 s6" style="padding:8px 10px;">
+                            <div class="stat-card" style="background: linear-gradient(135deg, #26C6DA, #0097A7);">
+                                <div class="stat-icon"><i class="material-icons">style</i></div>
+                                <h4 class="counter" data-target="<%= stats.tarotDrawsToday %>">0</h4>
+                                <span class="stat-label">Tarot Draws Today</span>
                             </div>
                         </div>
-                        <div class="col m3 s12" style="padding:10px;">
-                            <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);">
-                                <h4 class="counter white-text" data-target="<%= stats.totalUsers %>">0</h4>
-                                <span class="white-text" style="font-size:18px;">Total Users</span>
+                        <div class="col m3 s6" style="padding:8px 10px;">
+                            <div class="stat-card" style="background: linear-gradient(135deg, #66BB6A, #2E7D32);">
+                                <div class="stat-icon"><i class="material-icons">people</i></div>
+                                <h4 class="counter" data-target="<%= stats.totalUsers %>">0</h4>
+                                <span class="stat-label">Total Users</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <!-- Moon Phase / Today's Insight -->
-                        <div class="col s12 m7">
-                            <div class="card z-depth-3" style="border-radius:16px;">
+                    <!-- Cosmic Energy + Zodiac -->
+                    <div class="row" style="margin-top: 6px;">
+                        <div class="col s12 m6" style="padding:8px 10px;">
+                            <div class="card panel-card">
                                 <div class="card-content">
-                                    <h5 style="font-weight:700;"><i class="material-icons left">brightness_3</i> Today's Cosmic Energy</h5>
-                                    <div class="center-align mt-3">
-                                        <h1 style="font-size: 4.5rem; margin: 10px 0;">🌙</h1>
-                                        <h5><%= moon.phaseName %><%= moon.currentSign ? ' in ' + moon.currentSign : '' %></h5>
-                                        <p class="grey-text">
-                                            <%= moon.description || (moon.illuminationPercent + '% illuminated') %>
-                                        </p>
+                                    <h5 class="panel-title"><i class="material-icons">brightness_3</i> Today's Cosmic Energy</h5>
+                                    <div class="cosmic-body">
+                                        <div class="moon-circle">🌙</div>
+                                        <div class="cosmic-info">
+                                            <p class="cosmic-phase"><%= moon.phaseName %></p>
+                                            <div class="chip-row">
+                                                <% if (moon.currentSign) { %>
+                                                    <span class="mini-chip">in <%= moon.currentSign %></span>
+                                                <% } %>
+                                                <% if (moon.illuminationPercent !== undefined && moon.illuminationPercent !== null) { %>
+                                                    <span class="mini-chip alt"><%= moon.illuminationPercent %>% illuminated</span>
+                                                <% } %>
+                                            </div>
+                                            <% if (moon.description) { %>
+                                                <p class="cosmic-desc"><%= moon.description %></p>
+                                            <% } %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Popular Zodiac -->
-                        <div class="col s12 m5">
-                            <div class="card z-depth-3" style="border-radius:16px; height:100%;">
+                        <div class="col s12 m6" style="padding:8px 10px;">
+                            <div class="card panel-card">
                                 <div class="card-content">
-                                    <h5 style="font-weight:700;">Most Active Zodiac Signs</h5>
-                                    <div class="row mt-3">
-                                        <% if (zodiacSigns && zodiacSigns.length > 0) { %>
-                                            <% zodiacSigns.forEach(function(z) { %>
-                                                <div class="col s6"><%= z.emoji %> <%= z.sign %> <span class="right"><%= z.percent %>%</span></div>
-                                            <% }) %>
-                                        <% } else { %>
-                                            <div class="col s12 grey-text">No birth chart data yet.</div>
-                                        <% } %>
-                                    </div>
+   <h5 class="panel-title"><i class="material-icons">stars</i> Users by Rising Sign</h5>
+                                       <% if (zodiacSigns && zodiacSigns.length > 0) { %>
+                                        <% zodiacSigns.slice(0, 4).forEach(function(z) { %>
+                                            <div class="zodiac-row">
+                                                <div class="zodiac-head">
+                                                    <span><%= z.emoji %> <%= z.sign %></span>
+                                                    <span><%= z.percent %>%</span>
+                                                </div>
+                                                <div class="zodiac-bar"><span style="width: <%= z.percent %>%;"></span></div>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p class="grey-text" style="margin:0;">No birth chart data yet.</p>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Weekly Trend Chart -->
-                    <div class="row mt-4">
-                        <div class="col s12">
-                            <div class="card z-depth-3" style="border-radius:16px;">
+                    <div class="row" style="margin-top: 6px;">
+                        <div class="col s12" style="padding:8px 10px;">
+                            <div class="card panel-card">
                                 <div class="card-content">
-                                    <h5 style="font-weight:700;">Weekly New Signups Trend</h5>
-                                    <div style="height: 380px;">
+                                    <div class="chart-head">
+                                        <h5 class="panel-title"><i class="material-icons">show_chart</i> Weekly Signups &amp; Active Users</h5>
+                                    </div>
+                                    <div class="chart-wrap">
                                         <canvas id="astroChart"></canvas>
                                     </div>
                                 </div>
@@ -123,12 +218,13 @@
     <%- include('_layouts/commonJs') %>
 
     <script>
-        // Data passed from the server - real query results, not hardcoded
+        // Server se aaya real data
         const weeklyLabels = <%- JSON.stringify(weeklyTrend.labels) %>;
-        const weeklyData = <%- JSON.stringify(weeklyTrend.data) %>;
+        const weeklySignups = <%- JSON.stringify(weeklyTrend.data) %>;
+        const weeklyActive = <%- JSON.stringify(weeklyTrend.activeData || []) %>;
 
-        // Counter Animation
         document.addEventListener('DOMContentLoaded', () => {
+            // Counter animation
             document.querySelectorAll('.counter').forEach(counter => {
                 const target = parseInt(counter.getAttribute('data-target')) || 0;
                 let count = 0;
@@ -146,24 +242,71 @@
 
             // Chart
             const ctx = document.getElementById('astroChart').getContext('2d');
+
+            const gradPurple = ctx.createLinearGradient(0, 0, 0, 320);
+            gradPurple.addColorStop(0, 'rgba(156, 39, 176, 0.30)');
+            gradPurple.addColorStop(1, 'rgba(156, 39, 176, 0.02)');
+
+            const gradTeal = ctx.createLinearGradient(0, 0, 0, 320);
+            gradTeal.addColorStop(0, 'rgba(0, 172, 193, 0.28)');
+            gradTeal.addColorStop(1, 'rgba(0, 172, 193, 0.02)');
+
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: weeklyLabels,
-                    datasets: [{
-                        label: 'New Signups',
-                        data: weeklyData,
-                        borderColor: '#9C27B0',
-                        backgroundColor: 'rgba(156, 39, 176, 0.15)',
-                        tension: 0.4,
-                        borderWidth: 5
-                    }]
+                    datasets: [
+                        {
+                            label: 'New Signups',
+                            data: weeklySignups,
+                            borderColor: '#9C27B0',
+                            backgroundColor: gradPurple,
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#9C27B0',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: 'Active Users',
+                            data: weeklyActive,
+                            borderColor: '#00ACC1',
+                            backgroundColor: gradTeal,
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#00ACC1',
+                            pointBorderWidth: 2
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: true, position: 'top' } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            align: 'end',
+                            labels: { usePointStyle: true, boxWidth: 8, padding: 16 }
+                        },
+                        tooltip: { padding: 10, cornerRadius: 8 }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(0,0,0,0.06)' }
+                        }
+                    }
                 }
             });
         });

@@ -1494,7 +1494,7 @@ exports.getSymptomOptions = async (req, res, next) => {
 
     return success(res, "Options fetched.", {
       moods: ["Happy", "Fun", "Sad", "Shocked", "Angry", "Frustrated"],
-      flowOptions: ["Light", "Medium", "Heavy"],
+      flowOptions: ["Heavy", "Spot", "Light"],
       // Model me energy Number(0-100) hai - slider ke liye range bhejo,
       // fixed options nahi.
       energyRange: { min: 0, max: 100, step: 1 },

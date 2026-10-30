@@ -1,0 +1,22 @@
+Admin dashboard :-
+1.   Today's Cosmic Energy
+     -> Waning Gibbous  => Swiss Ephemeris. Aaj ki date se Sun aur Moon ki position nikalke phase decide hota hai.
+
+     -> in Gemini => Swiss Ephemeris. Moon ki aaj ki position (degree) 0 se 360 ke zodiac circle par dekhi jati hai. Circle ke 12 sign hote hain, har sign 30° ka. Moon jis 30° ke hisse me hai, wahi sign dikhta hai (jaise 60° se 90° = Gemini).
+
+     -> 85.5% illuminated => Moon ka kitna hissa roshan dikh raha hai. Sun aur Moon ke beech ke angle se nikalta hai.
+          Sun ke bilkul saamne (180°) = 100% (Full Moon)
+          Sun ke saath (0°) = 0% (New Moon)
+          Beech ke angle par % isi hisaab se badalta hai
+
+     -> small description => Dynamic (Celestial → Moon Phases) isme add kiya he vo data yaha show ho rha he
+
+2.   Users by Rising Sign
+     -> Sign (Cancer, Libra...) => Har user ke birth chart ka Rising Sign (Ascendant). Ye user ki birth date, time aur place se calculate hoke user ke data me save hota hai.
+
+     -> Percentage => Us sign ke users ÷ jitne users ka birth chart bana hai, unka total × 100.
+            Example: 10 users ka chart hai aur 3 ka Cancer hai => 30%
+
+    -> Static ya dynamic => Dynamic. Naya user birth chart banata hai to count aur percent apne aap update ho jate hain.
+
+    -> Sirf top 4 signs dashboard me dikhte hain.
