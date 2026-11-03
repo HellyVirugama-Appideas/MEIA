@@ -368,7 +368,90 @@ const buildZodiacStats = async () => {
 /* ------------------------------------------------------------------ */
 /* GET /admin  (Dashboard)                                            */
 /* ------------------------------------------------------------------ */
+// exports.getDashboard = async (req, res) => {
+//   try {
+//     const todayStart = startOfDay();
+//     const todayEnd = addDays(todayStart, 1);
+
+//     // ---------------- Moon (today) ----------------
+//     const moonCalc = calculateMoonPhase(new Date(), "Asia/Kolkata");
+//     const moonContent = await MoonPhaseInfo.findOne({
+//       phaseName: moonCalc.phaseName,
+//     });
+
+//     const moon = {
+//       phaseName: moonCalc.phaseName,
+//       currentSign: moonCalc.currentSign || moonCalc.sign || null,   // 👈 calculateMoonPhase jo key return kare
+//       illuminationPercent: moonCalc.illuminationPercent ?? null,
+//       description: moonContent?.description || "",
+//     };
+
+//     // ---------------- Stats + charts (parallel) ----------------
+//     const [
+//       newSignupsToday,
+//       activeSubscribers,
+//       tarotDrawsToday,
+//       totalUsers,
+//       zodiacSigns,
+//       weeklyTrend,
+//     ] = await Promise.all([
+//       User.countDocuments({ createdAt: { $gte: todayStart, $lt: todayEnd } }),
+
+//       // 👈 Subscription ka apna logic lagao (neeche note dekho)
+//       User.countDocuments({ "subscription.status": "active" }),
+
+//       TarotDraw.countDocuments({ date: { $gte: todayStart, $lt: todayEnd } }),
+
+//       User.countDocuments({}),
+
+//       buildZodiacStats(),
+//       buildWeeklyTrend(),
+//     ]);
+//     console.log("PERMISSION ERROR:", permissionError, "| FLASH:", flashMessages);
+
+//     res.render("index", {
+//       title: "Dashboard",
+//       adminName: req.session.admin?.name || "Admin",
+//       url: req.originalUrl,
+//       messages: req.flash(),
+
+//       stats: {
+//         newSignupsToday,
+//         activeSubscribers,
+//         tarotDrawsToday,
+//         totalUsers,
+//       },
+//       moon,
+//       zodiacSigns,
+//       weeklyTrend,   // { labels, data (signups), activeData }
+//     });
+//   } catch (err) {
+//     console.error("getDashboard error:", err);
+
+//     // Error me bhi page khule, crash na ho
+//     res.render("index", {
+//       title: "Dashboard",
+//       adminName: req.session.admin?.name || "Admin",
+//       url: req.originalUrl,
+//       messages: { error: ["Failed to load dashboard data."] },
+//       stats: { newSignupsToday: 0, activeSubscribers: 0, tarotDrawsToday: 0, totalUsers: 0 },
+//       moon: { phaseName: "-", currentSign: null, illuminationPercent: null, description: "" },
+//       zodiacSigns: [],
+//       weeklyTrend: { labels: [], data: [], activeData: [] },
+//     });
+//   }
+// };
+
 exports.getDashboard = async (req, res) => {
+  // 👇 Ye lines try se PEHLE rakho, taaki catch block me bhi mil jayein
+  const permissionError = req.session.permissionError;
+  delete req.session.permissionError;
+
+  const flashMessages = req.flash();   // sirf ek baar call karo
+  if (permissionError) {
+    flashMessages.error = [...(flashMessages.error || []), permissionError];
+  }
+
   try {
     const todayStart = startOfDay();
     const todayEnd = addDays(todayStart, 1);
@@ -381,7 +464,7 @@ exports.getDashboard = async (req, res) => {
 
     const moon = {
       phaseName: moonCalc.phaseName,
-      currentSign: moonCalc.currentSign || moonCalc.sign || null,   // 👈 calculateMoonPhase jo key return kare
+      currentSign: moonCalc.currentSign || moonCalc.sign || null,
       illuminationPercent: moonCalc.illuminationPercent ?? null,
       description: moonContent?.description || "",
     };
@@ -395,24 +478,28 @@ exports.getDashboard = async (req, res) => {
       zodiacSigns,
       weeklyTrend,
     ] = await Promise.all([
-      User.countDocuments({ createdAt: { $gte: todayStart, $lt: todayEnd } }),
+      User.countDocuments({
+        createdAt: { $gte: todayStart, $lt: todayEnd },
+        status: { $ne: "deleted" },
+      }),
 
-      // 👈 Subscription ka apna logic lagao (neeche note dekho)
       User.countDocuments({ "subscription.status": "active" }),
 
       TarotDraw.countDocuments({ date: { $gte: todayStart, $lt: todayEnd } }),
 
-      User.countDocuments({}),
+      User.countDocuments({ status: { $ne: "deleted" } }),   // soft-deleted users nahi ginenge
 
       buildZodiacStats(),
       buildWeeklyTrend(),
     ]);
 
+    console.log("PERMISSION ERROR:", permissionError, "| FLASH:", flashMessages);
+
     res.render("index", {
       title: "Dashboard",
       adminName: req.session.admin?.name || "Admin",
       url: req.originalUrl,
-      messages: req.flash(),
+      messages: flashMessages,   // 👈 req.flash() dobara nahi, wo ab khali aayega
 
       stats: {
         newSignupsToday,
@@ -422,17 +509,19 @@ exports.getDashboard = async (req, res) => {
       },
       moon,
       zodiacSigns,
-      weeklyTrend,   // { labels, data (signups), activeData }
+      weeklyTrend,
     });
   } catch (err) {
     console.error("getDashboard error:", err);
 
-    // Error me bhi page khule, crash na ho
     res.render("index", {
       title: "Dashboard",
       adminName: req.session.admin?.name || "Admin",
       url: req.originalUrl,
-      messages: { error: ["Failed to load dashboard data."] },
+      messages: {
+        ...flashMessages,
+        error: [...(flashMessages.error || []), "Failed to load dashboard data."],
+      },
       stats: { newSignupsToday: 0, activeSubscribers: 0, tarotDrawsToday: 0, totalUsers: 0 },
       moon: { phaseName: "-", currentSign: null, illuminationPercent: null, description: "" },
       zodiacSigns: [],
@@ -440,6 +529,7 @@ exports.getDashboard = async (req, res) => {
     });
   }
 };
+
 /* ===================== CHANGE PASSWORD ===================== */
 exports.getChangePass = (req, res) => {
   const messages = {};
@@ -503,18 +593,23 @@ exports.postChangePass = async (req, res) => {
    SUB ADMIN ROUTES (Only Super Admin Access)
    ============================================ */
 
+const flashRedirect = (req, res, type, message, url) => {
+  req.flash(type, message);
+  req.session.save(() => res.redirect(url));
+};
+
 // Permission modules matched to this project's actual sidenav sections
 // (see _layouts/sidenavbar.ejs) — NOT the courier/delivery modules from
 // the other project. Update this list if the sidenav changes.
 const SUBADMIN_MODULES = [
-  
+
   { key: "users", name: "Users" },
   { key: "cms", name: "CMS Pages" },
   { key: "content", name: "Content Management" },
   { key: "readings", name: "Reading Management" },
   { key: "rhythm", name: "Rhythm Content" },
   { key: "subscription", name: "Subscription" },
-  { key: "subadmin", name: "Sub Admin Management" }, 
+  { key: "subadmin", name: "Sub Admin Management" },
   // { key: "notifications", name: "Notifications" },
 ];
 

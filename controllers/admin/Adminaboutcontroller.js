@@ -53,14 +53,17 @@ const parseInfoCards = (body, files) => {
 
 exports.showAboutForm = async (req, res) => {
   try {
+    const flashMessages = req.flash();
+
     const about = await AboutContent.findOne().sort({ createdAt: -1 });
+
 
     res.render("about_form", {
       title: "About Page",
       about,
       adminName: req.session.admin?.name || "Admin",
       url: req.originalUrl,
-      messages: req.flash(),
+      messages: flashMessages,
     });
   } catch (err) {
     console.log(err);
@@ -118,7 +121,7 @@ exports.saveAbout = async (req, res) => {
   } catch (err) {
     console.log(err);
 
-    req.flash("error", err.message);
+    req.flash("error", err.message || "Something went wrong.");
 
     res.redirect("/admin/about");
   }

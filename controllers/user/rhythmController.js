@@ -962,6 +962,8 @@ const PhysicalSymptomOption = require("../../models/PhysicalSymptomOption");
 const CyclePhaseContent = require("../../models/CyclePhaseContent");
 const ElementalStateContent = require("../../models/ElementalStateContent");
 const MoonPhaseInfo = require("../../models/MoonPhaseInfo");
+const mongoose = require("mongoose");
+
 const {
   calculateMoonPhase,
   getUpcomingMoonPhases,
@@ -1581,6 +1583,100 @@ exports.getInsights = async (req, res, next) => {
       physicalEchoes,
       elementalState,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const syncLastPeriodDate = async (user) => {
+  const latest = await PeriodLog.findOne({ user: user._id }).sort({ startDate: -1 });
+  if (latest) {
+    if (!user.cycleInfo) user.cycleInfo = {};
+    user.cycleInfo.lastPeriodDate = latest.startDate;
+    await user.save();
+  }
+};
+
+const PERIOD_FLOW_OPTIONS =  ["Heavy", "Spot", "Light"]
+
+exports.updatePeriod = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return error(res, "Invalid period log id.", 400);
+    }
+
+    // Sirf apna hi log edit ho sakta hai
+    const log = await PeriodLog.findOne({ _id: id, user: req.user._id });
+    if (!log) return error(res, "Period log not found.", 404);
+
+    const { startDate, endDate, flow, notes } = req.body;
+
+    // ---- Validation ----
+    if (flow !== undefined && flow !== null && !PERIOD_FLOW_OPTIONS.includes(flow)) {
+      return error(res, "Flow must be one of: Light, Spot, Heavy.", 422);
+    }
+
+    const newStart = startDate !== undefined ? new Date(startDate) : log.startDate;
+    if (isNaN(new Date(newStart).getTime())) {
+      return error(res, "Invalid start date.", 422);
+    }
+
+    // endDate: undefined = unchanged, null / "" = clear, value = set
+    let newEnd = log.endDate;
+    if (endDate !== undefined) {
+      if (endDate === null || endDate === "") {
+        newEnd = null;
+      } else {
+        newEnd = new Date(endDate);
+        if (isNaN(newEnd.getTime())) return error(res, "Invalid end date.", 422);
+      }
+    }
+
+    if (newEnd && new Date(newEnd) < new Date(newStart)) {
+      return error(res, "End date cannot be before start date.", 422);
+    }
+
+    // ---- Apply ----
+    log.startDate = newStart;
+    log.endDate = newEnd;
+    if (flow !== undefined) log.flow = flow;
+    if (notes !== undefined) log.notes = notes;
+    await log.save();
+
+    // Start date badli ya latest log edit hua to user ka lastPeriodDate bhi sync
+    await syncLastPeriodDate(req.user);
+
+    const periodLog = log.toObject();
+    periodLog.durationDays = periodLog.endDate
+      ? Math.round(
+          (new Date(periodLog.endDate) - new Date(periodLog.startDate)) / (1000 * 60 * 60 * 24)
+        ) + 1
+      : null;
+
+    return success(res, "Period tracking updated.", { periodLog });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/* ------------------------------------------------------------------ */
+/*  3c. DELETE PERIOD -> DELETE /api/rhythm/period/:id                  */
+/*  (protected)                                                        */
+/* ------------------------------------------------------------------ */
+exports.deletePeriod = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return error(res, "Invalid period log id.", 400);
+    }
+
+    const deleted = await PeriodLog.findOneAndDelete({ _id: id, user: req.user._id });
+    if (!deleted) return error(res, "Period log not found.", 404);
+
+    await syncLastPeriodDate(req.user);
+
+    return success(res, "Period log deleted.", { id });
   } catch (err) {
     next(err);
   }

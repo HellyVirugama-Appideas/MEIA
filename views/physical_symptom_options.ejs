@@ -122,73 +122,75 @@
                             <div class="col s12">
                                 <div class="card">
                                     <div class="card-content">
-                                        <div class="row">
-                                            <div class="col s12 overflow">
+                                        <%- include('messages', { messages: messages }) %>
 
-                                                <table id="page-length-option" class="display">
+                                            <div class="row">
+                                                <div class="col s12 overflow">
 
-                                                    <thead>
-                                                        
-                                                        <tr>
-                                                            <th>Sr</th>
+                                                    <table id="page-length-option" class="display">
 
-                                                            <th>
-                                                                Order
-                                                            </th>
+                                                        <thead>
 
-                                                            <th>
-                                                                Icon
-                                                            </th>
+                                                            <tr>
+                                                                <th>Sr</th>
 
-                                                            <th>
-                                                                Name
-                                                            </th>
+                                                                <th>
+                                                                    Order
+                                                                </th>
 
-                                                            <th>
-                                                                Status
-                                                            </th>
+                                                                <th>
+                                                                    Icon
+                                                                </th>
 
-                                                            <th>
-                                                                Actions
-                                                            </th>
+                                                                <th>
+                                                                    Name
+                                                                </th>
 
-                                                        </tr>
+                                                                <th>
+                                                                    Status
+                                                                </th>
 
-                                                    </thead>
+                                                                <th>
+                                                                    Actions
+                                                                </th>
 
+                                                            </tr>
 
-                                                    <tbody>
-
-                                                        <% if (options && options.length) { %>
+                                                        </thead>
 
 
-                                                            <% options.forEach(function(opt,index) { %>
+                                                        <tbody>
 
-                                                                <tr class="symptom-row"
-                                                                    data-href="/admin/rhythm/symptom-options/edit/<%= opt._id %>">
-
-
-                                                                    <!-- Order -->
-                                                                    <td>
-                                                                        <%= index + 1 + ((typeof pagination
-                                                                            !=='undefined' && pagination?.page) ?
-                                                                            (pagination.page - 1) * (pagination.limit ||
-                                                                            25) : 0) %>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <%= opt.order %>
-                                                                    </td>
+                                                            <% if (options && options.length) { %>
 
 
-                                                                    <!-- Icon -->
+                                                                <% options.forEach(function(opt,index) { %>
 
-                                                                    <td>
+                                                                    <tr class="symptom-row"
+                                                                        data-href="/admin/rhythm/symptom-options/edit/<%= opt._id %>">
 
-                                                                        <% if (opt.icon) { %>
 
-                                                                            <img src="<%= opt.icon %>"
-                                                                                alt="<%= opt.name %>" style="
+                                                                        <!-- Order -->
+                                                                        <td>
+                                                                            <%= index + 1 + ((typeof pagination
+                                                                                !=='undefined' && pagination?.page) ?
+                                                                                (pagination.page - 1) *
+                                                                                (pagination.limit || 25) : 0) %>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <%= opt.order %>
+                                                                        </td>
+
+
+                                                                        <!-- Icon -->
+
+                                                                        <td>
+
+                                                                            <% if (opt.icon) { %>
+
+                                                                                <img src="<%= opt.icon %>"
+                                                                                    alt="<%= opt.name %>" style="
                                                                                 width:50px;
                                                                                 height:50px;
                                                                                 object-fit:contain;
@@ -198,103 +200,103 @@
                                                                                 background:#fff;
                                                                             ">
 
-                                                                            <% } else { %>
+                                                                                <% } else { %>
 
-                                                                                <span>
-                                                                                    —
+                                                                                    <span>
+                                                                                        —
+                                                                                    </span>
+
+                                                                                    <% } %>
+
+                                                                        </td>
+
+
+                                                                        <!-- Name -->
+
+                                                                        <td class="name-cell" title="<%= opt.name %>">
+                                                                            <%= opt.name %>
+                                                                        </td>
+
+
+                                                                        <!-- Status -->
+
+                                                                        <td>
+
+                                                                            <% if (opt.isActive) { %>
+
+                                                                                <span class="badge green white-text">
+                                                                                    Active
                                                                                 </span>
 
-                                                                                <% } %>
+                                                                                <% } else { %>
 
-                                                                    </td>
+                                                                                    <span class="badge red white-text">
+                                                                                        Inactive
+                                                                                    </span>
 
+                                                                                    <% } %>
 
-                                                                    <!-- Name -->
-
-                                                                    <td class="name-cell" title="<%= opt.name %>">
-                                                                        <%= opt.name %>
-                                                                    </td>
-
-
-                                                                    <!-- Status -->
-
-                                                                    <td>
-
-                                                                        <% if (opt.isActive) { %>
-
-                                                                            <span class="badge green white-text">
-                                                                                Active
-                                                                            </span>
-
-                                                                            <% } else { %>
-
-                                                                                <span class="badge red white-text">
-                                                                                    Inactive
-                                                                                </span>
-
-                                                                                <% } %>
-
-                                                                    </td>
+                                                                        </td>
 
 
-                                                                    <!-- Actions -->
+                                                                        <!-- Actions -->
 
-                                                                    <td class="actions-column">
+                                                                        <td class="actions-column">
 
-                                                                        <a href="/admin/rhythm/symptom-options/edit/<%= opt._id %>"
-                                                                            class="waves-effect waves-light accent-2 btn-edit"
-                                                                            title="Edit">
+                                                                            <a href="/admin/rhythm/symptom-options/edit/<%= opt._id %>"
+                                                                                class="waves-effect waves-light accent-2 btn-edit"
+                                                                                title="Edit">
 
-                                                                            <i class="material-icons">
-                                                                                edit
-                                                                            </i>
+                                                                                <i class="material-icons">
+                                                                                    edit
+                                                                                </i>
 
-                                                                        </a>
+                                                                            </a>
 
-                                                                        &nbsp;&nbsp;
+                                                                            &nbsp;&nbsp;
 
-                                                                        <a href="/admin/rhythm/symptom-options/delete/<%= opt._id %>"
-                                                                            class="waves-effect waves-light"
-                                                                            title="Delete"
-                                                                            onclick="return confirm('Delete this symptom option?')">
+                                                                            <a href="/admin/rhythm/symptom-options/delete/<%= opt._id %>"
+                                                                                class="waves-effect waves-light"
+                                                                                title="Delete"
+                                                                                onclick="return confirm('Delete this symptom option?')">
 
-                                                                            <i class="material-icons">
-                                                                                delete
-                                                                            </i>
+                                                                                <i class="material-icons">
+                                                                                    delete
+                                                                                </i>
 
-                                                                        </a>
+                                                                            </a>
 
-                                                                    </td>
-
-
-                                                                </tr>
-
-                                                                <% }) %>
+                                                                        </td>
 
 
-                                                                    <% } else { %>
+                                                                    </tr>
+
+                                                                    <% }) %>
 
 
-                                                                        <tr>
-
-                                                                            <td colspan="5"
-                                                                                class="center-align grey-text">
-
-                                                                                No symptom options found.
-
-                                                                            </td>
-
-                                                                        </tr>
+                                                                        <% } else { %>
 
 
-                                                                        <% } %>
+                                                                            <tr>
 
-                                                    </tbody>
+                                                                                <td colspan="5"
+                                                                                    class="center-align grey-text">
 
-                                                </table>
+                                                                                    No symptom options found.
 
+                                                                                </td>
+
+                                                                            </tr>
+
+
+                                                                            <% } %>
+
+                                                        </tbody>
+
+                                                    </table>
+
+                                                </div>
                                             </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

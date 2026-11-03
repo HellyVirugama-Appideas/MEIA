@@ -3,13 +3,16 @@ const Planet = require("../../models/Planet");
 const RitualStep = require("../../models/RitualStep");
 const TarotCard = require("../../models/TarotCard");
 const BreathingSession = require("../../models/BreathingSession");
-
 /* ===================== MOON PHASE CONTENT (Readings) ===================== */
 const ALL_PHASE_NAMES = [
   "New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous",
   "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent",
 ];
 
+const flashRedirect = (req, res, type, message, url) => {
+  req.flash(type, message);
+  req.session.save(() => res.redirect(url));
+};
 
 exports.listMoonPhases = async (req, res) => {
   // Auto-create any missing phase entries so admin always has all 8 to edit
@@ -299,6 +302,7 @@ exports.deleteRitualStep = async (req, res) => {
   req.flash("success", "Ritual step deleted successfully!");
   res.redirect("/admin/content/ritual");
 };
+
 
 
 /* ===================== TAROT SETTINGS ===================== */

@@ -54,64 +54,65 @@
 
                     <div class="card">
                         <div class="card-content">
+                            <%- include('messages', { messages: messages }) %>
 
-                            <form method="POST" enctype="multipart/form-data"
-                                action="/admin/rhythm/elemental-states/<%= element._id %>">
 
-                                <div class="row">
+                                <form method="POST" enctype="multipart/form-data"
+                                    action="/admin/rhythm/elemental-states/<%= element._id %>">
 
-                                    <div class="input-field col s12 m6">
-                                        <input type="text" value="<%= element.element %>" disabled>
-                                        <label class="active">Element (fixed)</label>
-                                    </div>
+                                    <div class="row">
 
-                                    <div class="input-field col s12 m6">
-                                        <select name="isActive">
-                                            <option value="true" <%= element.isActive ? 'selected' : '' %>>Active
-                                            </option>
-                                            <option value="false" <%= !element.isActive ? 'selected' : '' %>>
-                                                Inactive</option>
-                                        </select>
-                                        <label>Status</label>
-                                    </div>
-
-                                    <div class="file-field input-field col s12">
-                                        <div class="btn">
-                                            <span>Image</span>
-                                            <input type="file" name="image" accept="image/*">
+                                        <div class="input-field col s12 m6">
+                                            <input type="text" value="<%= element.element %>" disabled>
+                                            <label class="active">Element (fixed)</label>
                                         </div>
-                                        <div class="file-path-wrapper">
-                                            <input class="file-path validate" type="text"
-                                                placeholder="Upload Element Image">
+
+                                        <div class="input-field col s12 m6">
+                                            <select name="isActive">
+                                                <option value="true" <%=element.isActive ? 'selected' : '' %>>Active
+                                                </option>
+                                                <option value="false" <%=!element.isActive ? 'selected' : '' %>>
+                                                    Inactive</option>
+                                            </select>
+                                            <label>Status</label>
                                         </div>
+
+                                        <div class="file-field input-field col s12">
+                                            <div class="btn">
+                                                <span>Image</span>
+                                                <input type="file" name="image" accept="image/*">
+                                            </div>
+                                            <div class="file-path-wrapper">
+                                                <input class="file-path validate" type="text"
+                                                    placeholder="Upload Element Image">
+                                            </div>
+                                        </div>
+
+                                        <% if(element.image){ %>
+                                            <div class="col s12">
+                                                <img src="<%= element.image %>" style="width:180px;border-radius:10px">
+                                            </div>
+                                            <% } %>
+
+                                                <div class="input-field col s12">
+                                                    <input type="text" name="title" required
+                                                        value="<%= element.title %>">
+                                                    <label class="active">Title (e.g. "Grounded Earth")</label>
+                                                </div>
+
+                                                <div class="input-field col s12">
+                                                    <textarea class="materialize-textarea" name="description"
+                                                        required><%= element.description %></textarea>
+                                                    <label class="active">Description</label>
+                                                </div>
+
+                                                <div class="col s12 right-align">
+                                                    <button type="submit" class="btn">Update</button>
+                                                    <a href="/admin/rhythm/elemental-states" class="btn red">Cancel</a>
+                                                </div>
+
                                     </div>
-
-                                    <% if(element.image){ %>
-                                        <div class="col s12">
-                                            <img src="<%= element.image %>"
-                                                style="width:180px;border-radius:10px">
-                                        </div>
-                                        <% } %>
-
-                                            <div class="input-field col s12">
-                                                <input type="text" name="title" required
-                                                    value="<%= element.title %>">
-                                                <label class="active">Title (e.g. "Grounded Earth")</label>
-                                            </div>
-
-                                            <div class="input-field col s12">
-                                                <textarea class="materialize-textarea" name="description"
-                                                    required><%= element.description %></textarea>
-                                                <label class="active">Description</label>
-                                            </div>
-
-                                            <div class="col s12 right-align">
-                                                <button type="submit" class="btn">Update</button>
-                                                <a href="/admin/rhythm/elemental-states" class="btn red">Cancel</a>
-                                            </div>
-
-                                </div>
-                            </form>
+                                </form>
 
                         </div>
                     </div>

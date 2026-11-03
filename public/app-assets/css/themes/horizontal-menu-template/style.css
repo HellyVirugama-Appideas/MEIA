@@ -8036,6 +8036,7 @@ li.home:before
     white-space: nowrap;
 
     border-radius: 50px;
+    margin-right: 5px;
 }
 
 .avatar-status i

@@ -82,10 +82,10 @@ const requireAdminAuth = async (req, res, next) => {
  * Prevents an already-logged-in admin from re-visiting the login page.
  */
 const redirectIfLoggedIn = (req, res, next) => {
-    if (req.session && req.session.admin && req.session.admin.isLoggedIn === true) {
-        return res.redirect("/admin/dashboard");
-    }
-    next();
+  if (req.session && req.session.admin && req.session.admin.isLoggedIn === true) {
+    return res.redirect("/admin/dashboard");
+  }
+  next();
 };
 
 /**
@@ -93,18 +93,54 @@ const redirectIfLoggedIn = (req, res, next) => {
  * Must run AFTER requireAdminAuth, since it relies on req.admin.
  */
 const isSuperAdmin = (req, res, next) => {
-    if (!req.admin) {
-        if (typeof req.flash === "function") req.flash("error", "Session expired. Please login again.");
-        return res.redirect("/admin/login");
-    }
+  if (!req.admin) {
+    if (typeof req.flash === "function") req.flash("error", "Session expired. Please login again.");
+    return res.redirect("/admin/login");
+  }
 
-    if (req.admin.role !== "S") {
-        if (typeof req.flash === "function") req.flash("error", "Super Admin access required");
-        return res.redirect("/admin/dashboard");
-    }
+  if (req.admin.role !== "S") {
+    if (typeof req.flash === "function") req.flash("error", "Super Admin access required");
+    return res.redirect("/admin/dashboard");
+  }
 
-    next();
+  next();
 };
+
+// const checkPermission = (moduleKey, action = "isView") => {
+//   return (req, res, next) => {
+//     if (!req.admin) {
+//       if (typeof req.flash === "function") {
+//         req.flash("error", "Session expired. Please login again.");
+//       }
+//       return res.redirect("/admin/login");
+//     }
+
+//     if (req.admin.role === "S") return next();
+
+//     const perm = (req.admin.permission || []).find(
+//       (p) => p.key === moduleKey || p.module === moduleKey
+//     );
+
+//     const allowed =
+//       perm &&
+//       (perm[action] === true ||
+//         perm[action] === "true" ||
+//         perm[action] === 1);
+
+//     if (!allowed) {
+//       // Flash + query dono — query guaranteed dikhega
+//       if (typeof req.flash === "function") {
+//         req.flash("error", "You do not have permission to access this page.");
+//       }
+//       return res.redirect(
+//         "/admin/dashboard?error=" +
+//           encodeURIComponent("You do not have permission to access this page.")
+//       );
+//     }
+
+//     next();
+//   };
+// };
 
 const checkPermission = (moduleKey, action = "isView") => {
   return (req, res, next) => {
@@ -127,15 +163,17 @@ const checkPermission = (moduleKey, action = "isView") => {
         perm[action] === "true" ||
         perm[action] === 1);
 
+    // if (!allowed) {
+    //   if (typeof req.flash === "function") {
+    //     req.flash("error", "You do not have permission to access this page.");
+    //   }
+    //   return res.redirect("/admin/dashboard");   // 👈 query hata di
+    // }
+
     if (!allowed) {
-      // Flash + query dono — query guaranteed dikhega
-      if (typeof req.flash === "function") {
-        req.flash("error", "You do not have permission to access this page.");
-      }
-      return res.redirect(
-        "/admin/dashboard?error=" +
-          encodeURIComponent("You do not have permission to access this page.")
-      );
+      req.session.permissionError = "You do not have permission to access this page.";
+      // save hone ke BAAD redirect, taaki message kho na jaye
+      return req.session.save(() => res.redirect("/admin/dashboard"));
     }
 
     next();
@@ -143,8 +181,8 @@ const checkPermission = (moduleKey, action = "isView") => {
 };
 
 module.exports = {
-    requireAdminAuth,
-    redirectIfLoggedIn,
-    isSuperAdmin,
-    checkPermission,
+  requireAdminAuth,
+  redirectIfLoggedIn,
+  isSuperAdmin,
+  checkPermission,
 };

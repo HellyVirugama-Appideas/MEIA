@@ -27,7 +27,7 @@ const User = require("../../models/User");
 exports.listUsers = async (req, res) => {
   try {
     // Agar pehle koi filter/search tha to wo yahan rakho, warna khali rehne do
-    const filter = {};
+    const filter = { status: { $ne: "deleted" } };
 
     // 👈 pagination hata diya: skip, limit, page, countDocuments sab remove
     const users = await User.find(filter).sort({ createdAt: -1 });
@@ -253,3 +253,75 @@ exports.updateUser = async (req, res) => {
     res.redirect(editUrl);
   }
 };
+
+/* ---------------------------- SOFT DELETE ---------------------------- */
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user || user.status === "deleted") {
+      req.flash("error", "User not found.");
+      return res.redirect(USER_LIST_URL);
+    }
+
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: { status: "deleted", deletedAt: new Date() },
+        $unset: { fcmToken: "" },   // delete ke baad push notifications band
+      }
+    );
+
+    req.flash("success", "User deleted successfully.");
+    res.redirect(USER_LIST_URL);
+  } catch (err) {
+    console.error("deleteUser error:", err);
+    req.flash("error", "Failed to delete user.");
+    res.redirect(USER_LIST_URL);
+  }
+};
+
+/* ---------------------------- BLOCK / UNBLOCK ---------------------------- */
+exports.updateUserStatus = async (req, res) => {
+  const { status, returnTo } = req.body; // status: "active" | "blocked"
+  const backUrl =
+    returnTo === "list" ? USER_LIST_URL : `${USER_LIST_URL}/${req.params.id}`;
+
+  try {
+    if (!["active", "blocked"].includes(status)) {
+      req.flash("error", "Invalid status.");
+      return res.redirect(backUrl);
+    }
+
+    const user = await User.findById(req.params.id);
+
+    if (!user || user.status === "deleted") {
+      req.flash("error", "User not found.");
+      return res.redirect(USER_LIST_URL);
+    }
+
+    if (user.status === status) {
+      req.flash("error", `User is already ${status}.`);
+      return res.redirect(backUrl);
+    }
+
+    const update = { $set: { status } };
+    if (status === "blocked") {
+      update.$unset = { fcmToken: "" }; // blocked user ko push notifications band
+    }
+
+    await User.updateOne({ _id: user._id }, update);
+
+    req.flash(
+      "success",
+      status === "blocked" ? "User blocked successfully." : "User unblocked successfully."
+    );
+    res.redirect(backUrl);
+  } catch (err) {
+    console.error("updateUserStatus error:", err);
+    req.flash("error", "Failed to update user status.");
+    res.redirect(backUrl);
+  }
+};
+
+

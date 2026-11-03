@@ -2,6 +2,11 @@ const CyclePhaseContent = require("../../models/CyclePhaseContent");
 const ElementalStateContent = require("../../models/ElementalStateContent");
 const PhysicalSymptomOption = require("../../models/PhysicalSymptomOption");
 
+const flashRedirect = (req, res, type, message, url) => {
+  req.flash(type, message);
+  req.session.save(() => res.redirect(url));
+};
+
 /* ============================================================
    CYCLE PHASE CONTENT (menstrual / follicular / ovulation / luteal)
    Fixed 4 entries -> list + edit only

@@ -45,4 +45,8 @@ router.post("/users/:id/status", requireAdminAuth, checkPermission(MODULE, "isEd
 /* ---- VIEW (":id" wala sabse last me) ---- */
 router.get("/users/:id", requireAdminAuth, checkPermission(MODULE, "isView"), userController.viewUser);
 
+router.post("/users/:id/delete", requireAdminAuth, checkPermission(MODULE, "isDelete"), userController.deleteUser);
+
+router.post("/users/:id/status", requireAdminAuth, checkPermission(MODULE, "isEdit"), userController.updateUserStatus);
+
 module.exports = router;
