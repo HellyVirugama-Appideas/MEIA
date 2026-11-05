@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const Admin = require("../../models/admin");
+const UserActivity = require("../../models/UserActivity");
+const { ACTIVITY_TZ } = require("../../utils/trackActivity");
 
 /* ===================== GET LOGIN PAGE ===================== */
 exports.getLoginPage = (req, res) => {
@@ -109,6 +111,50 @@ const ZODIAC_EMOJI = {
   Sagittarius: "♐", Capricorn: "♑", Aquarius: "♒", Pisces: "♓",
 };
 
+/* Ek din me jin users ne app use kiya, unki unique ginti */
+const getActiveUserCount = async (key, start, end) => {
+  const [tracked, tarot, ritual, saved] = await Promise.all([
+    UserActivity.distinct("user", { date: key }),   // 👈 NEW: kisi bhi API call se
+    TarotDraw.distinct("user", { date: { $gte: start, $lt: end } }),
+    RitualCompletion.distinct("user", { date: { $gte: start, $lt: end } }),
+    SavedItem.distinct("user", { createdAt: { $gte: start, $lt: end } }),
+  ]);
+
+  // purane din ka data bhi dikhe, isliye purane sources bhi jode hain
+  return new Set([...tracked, ...tarot, ...ritual, ...saved].map(String)).size;
+};
+
+/* Last 7 din ke signups + active users */
+const buildWeeklyTrend = async () => {
+  const labels = [];
+  const jobs = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const day = moment().tz(ACTIVITY_TZ).startOf("day").subtract(i, "days");
+    const start = day.toDate();
+    const end = day.clone().add(1, "day").toDate();
+
+    labels.push(day.format("ddd D"));
+
+    jobs.push(
+      Promise.all([
+        User.countDocuments({
+          createdAt: { $gte: start, $lt: end },
+          status: { $ne: "deleted" },
+        }),
+        getActiveUserCount(day.format("YYYY-MM-DD"), start, end),
+      ])
+    );
+  }
+
+  const results = await Promise.all(jobs);
+
+  return {
+    labels,
+    data: results.map(([signups]) => signups),
+    activeData: results.map(([, active]) => active),
+  };
+};
 /* Ek din me jin users ne koi bhi activity ki, unki unique list */
 const getActiveUserIds = async (start, end) => {
   const [tarot, ritual, saved, newUsers] = await Promise.all([
@@ -126,35 +172,6 @@ const getActiveUserIds = async (start, end) => {
   return unique.size;
 };
 
-/* Last 7 din ke signups + active users */
-const buildWeeklyTrend = async () => {
-  const labels = [];
-  const jobs = [];
-
-  for (let i = 6; i >= 0; i--) {
-    const start = startOfDay(addDays(new Date(), -i));
-    const end = addDays(start, 1);
-
-    labels.push(
-      start.toLocaleDateString("en-IN", { weekday: "short", day: "numeric" })
-    );
-
-    jobs.push(
-      Promise.all([
-        User.countDocuments({ createdAt: { $gte: start, $lt: end } }),
-        getActiveUserIds(start, end),
-      ])
-    );
-  }
-
-  const results = await Promise.all(jobs);
-
-  return {
-    labels,
-    data: results.map(([signups]) => signups),
-    activeData: results.map(([, active]) => active),
-  };
-};
 const buildZodiacStats = async () => {
   const rows = await User.aggregate([
     {

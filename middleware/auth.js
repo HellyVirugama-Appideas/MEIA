@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { error } = require("../utils/response");
+const { trackActivity } = require("../utils/trackActivity");
 
 const protect = async (req, res, next) => {
   try {
@@ -29,6 +30,8 @@ const protect = async (req, res, next) => {
     }
 
     req.user = user;
+    trackActivity(user._id);
+
     next();
   } catch (err) {
     return error(res, "Not authorized. Invalid or expired token.", 401);
