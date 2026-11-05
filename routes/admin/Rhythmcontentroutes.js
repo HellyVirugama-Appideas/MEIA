@@ -7,6 +7,10 @@ const createUploader = require("../../middleware/upload"); // apna actual path c
 const upload = createUploader("rhythm");
 const MODULE = "rhythm";
 
+router.get("/cycle-phases/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), rhythmContentController.viewCyclePhase);
+router.get("/elemental-states/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), rhythmContentController.viewElementalState);
+router.get("/symptom-options/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), rhythmContentController.viewSymptomOption);
+
 /* ===================== CYCLE PHASE CONTENT ===================== */
 router.get("/cycle-phases", requireAdminAuth, checkPermission(MODULE, "isView"), rhythmContentController.listCyclePhases);
 router.get("/cycle-phases/add", requireAdminAuth, checkPermission(MODULE, "isAdd"), rhythmContentController.newCyclePhaseForm);
@@ -41,6 +45,9 @@ router.post(
   upload.single("image"),
   rhythmContentController.updateElementalState
 );
+
+
+
 
 /* ===================== PHYSICAL SYMPTOM OPTIONS ===================== */
 // NOTE: in the original file these routes had NO auth middleware at all —

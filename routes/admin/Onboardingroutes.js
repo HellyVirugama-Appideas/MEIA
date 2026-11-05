@@ -16,6 +16,9 @@ router.post(
   slideController.createSlide
 );
 router.get("/edit/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), slideController.editSlideForm);
+
+router.get("/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), slideController.viewSlide);
+
 router.post(
   "/:id",
   requireAdminAuth,

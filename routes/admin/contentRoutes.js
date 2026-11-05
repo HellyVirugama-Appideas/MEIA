@@ -6,18 +6,10 @@ const upload = require("../../middleware/upload");
 const contentController = require("../../controllers/admin/Contentcontroller");
 const MODULE = "content";
 
-/* ===================== READINGS (Moon Phase content) ===================== */
-router.get("/moon-phases", requireAdminAuth, checkPermission(MODULE, "isView"), contentController.listMoonPhases);
-router.get("/moon-phases/edit/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), contentController.editMoonPhaseForm);
-router.post("/moon-phases/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), contentController.updateMoonPhase);
 
-/* ===================== PLANETS ===================== */
-router.get("/planets", requireAdminAuth, checkPermission(MODULE, "isView"), contentController.listPlanets);
-router.get("/planets/add", requireAdminAuth, checkPermission(MODULE, "isAdd"), contentController.newPlanetForm);
-router.post("/planets", requireAdminAuth, checkPermission(MODULE, "isAdd"), contentController.createPlanet);
-router.get("/planets/edit/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), contentController.editPlanetForm);
-router.post("/planets/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), contentController.updatePlanet);
-router.get("/planets/delete/:id", requireAdminAuth, checkPermission(MODULE, "isDelete"), contentController.deletePlanet);
+router.get("/ritual/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), contentController.viewRitualStep);
+router.get("/tarot/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), contentController.viewTarotCard);
+
 
 /* ===================== RITUAL CONTENT ===================== */
 router.get("/ritual", requireAdminAuth, checkPermission(MODULE, "isView"), contentController.listRitualSteps);
@@ -69,5 +61,8 @@ router.post("/breathing", requireAdminAuth, checkPermission(MODULE, "isAdd"), co
 router.get("/breathing/edit/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), contentController.editBreathingSessionForm);
 router.post("/breathing/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), contentController.updateBreathingSession);
 router.get("/breathing/delete/:id", requireAdminAuth, checkPermission(MODULE, "isDelete"), contentController.deleteBreathingSession);
+
+router.get("/breathing/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), contentController.viewBreathingSession);
+
 
 module.exports = router;

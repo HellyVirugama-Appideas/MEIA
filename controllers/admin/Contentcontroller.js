@@ -14,150 +14,63 @@ const flashRedirect = (req, res, type, message, url) => {
   req.session.save(() => res.redirect(url));
 };
 
-exports.listMoonPhases = async (req, res) => {
-  // Auto-create any missing phase entries so admin always has all 8 to edit
-  const existing = await MoonPhaseInfo.find().select("phaseName");
-  const existingNames = existing.map((p) => p.phaseName);
-  const missing = ALL_PHASE_NAMES.filter((n) => !existingNames.includes(n));
-  if (missing.length) {
-    await MoonPhaseInfo.insertMany(missing.map((phaseName) => ({ phaseName })));
-  }
-
-  const phases = await MoonPhaseInfo.find().sort({ phaseName: 1 });
-  res.render("moon_phases", {
-    title: "Moon Phase Content",
-    phases,
+const renderContentView = (req, res, data) =>
+  res.render("content_view", {
     adminName: req.session.admin?.name || "Admin",
     url: req.originalUrl,
     messages: req.flash(),
+    ...data,
   });
-};
 
-exports.editMoonPhaseForm = async (req, res) => {
-  const phase = await MoonPhaseInfo.findById(req.params.id);
-  if (!phase) {
-    req.flash("error", "Moon phase not found.");
-    return res.redirect("/admin/content/moon-phases");
+exports.viewRitualStep = async (req, res) => {
+  const s = await RitualStep.findById(req.params.id);
+  if (!s) return flashRedirect(req, res, "error", "Ritual step not found.", "/admin/content/ritual");
+
+  const fields = [
+    { label: "Type", value: s.type },
+    { label: "Title", value: s.title },
+    { label: "Subtitle", value: s.subtitle },
+    { label: "Order", value: s.order },
+    { label: "Status", value: s.isActive ? "Active" : "Inactive", badge: s.isActive ? "green" : "red" },
+  ];
+  if (s.type === "guided_breathing" && s.breathing) {
+    fields.push(
+      { label: "Inhale (sec)", value: s.breathing.inhaleSeconds },
+      { label: "Hold (sec)", value: s.breathing.holdSeconds },
+      { label: "Exhale (sec)", value: s.breathing.exhaleSeconds }
+    );
   }
-  res.render("moon_phase_form", {
-    title: "Edit Moon Phase Content",
-    phase,
-    adminName: req.session.admin?.name || "Admin",
-    url: req.originalUrl,
-    messages: req.flash(),
+
+  renderContentView(req, res, {
+    title: "View Ritual Step",
+    heading: s.title,
+    image: s.image,
+    backUrl: "/admin/content/ritual",
+    backLabel: "Ritual Content",
+    editUrl: `/admin/content/ritual/edit/${s._id}`,
+    fields,
   });
 };
 
-// exports.updateMoonPhase = async (req, res) => {
-//   const { description, guideContent, keywords } = req.body;
-//   await MoonPhaseInfo.findByIdAndUpdate(req.params.id, {
-//     description,
-//     guideContent,
-//     // Was previously dropped entirely - this is why Home's
-//     // moonPhase.keywords always came back as [] regardless of what
-//     // was typed in the admin form (the form had no field for it either).
-//     keywords: keywords
-//       ? keywords.split(",").map((k) => k.trim()).filter(Boolean)
-//       : [],
-//   });
-//   req.flash("success", "Moon phase content updated!");
-//   res.redirect("/admin/content/moon-phases");
-// };
+exports.viewTarotCard = async (req, res) => {
+  const c = await TarotCard.findById(req.params.id);
+  if (!c) return flashRedirect(req, res, "error", "Card not found.", "/admin/content/tarot");
 
-exports.updateMoonPhase = async (req, res) => {
-  try {
-    const { description, guideContent, keywords } = req.body;
-
-    const updateData = {
-      description,
-      guideContent,
-      keywords: keywords
-        ? keywords.split(",").map((k) => k.trim()).filter(Boolean)
-        : [],
-    };
-    // sirf tab overwrite karo jab nayi image upload hui ho
-    if (req.file) updateData.image = `/uploads/moonphase/${req.file.filename}`;
-
-    const updated = await MoonPhaseInfo.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updated) {
-      req.flash("error", "Moon phase not found.");
-      return res.redirect("/admin/content/moon-phases");
-    }
-
-    req.flash("success", "Moon phase content updated!");
-    res.redirect("/admin/content/moon-phases");
-  } catch (err) {
-    console.error("updateMoonPhase error:", err);
-    req.flash("error", "Failed to update moon phase.");
-    res.redirect(`/admin/content/moon-phases/edit/${req.params.id}`);
-  }
-};
-
-/* ===================== PLANETS ===================== */
-exports.listPlanets = async (req, res) => {
-  const planets = await Planet.find().sort({ order: 1 });
-  res.render("planets", {
-    title: "Planet Content",
-    planets,
-    adminName: req.session.admin?.name || "Admin",
-    url: req.originalUrl,
-    messages: req.flash(),
+  renderContentView(req, res, {
+    title: "View Tarot Card",
+    heading: c.name,
+    image: c.image,
+    backUrl: "/admin/content/tarot",
+    backLabel: "Tarot Cards",
+    editUrl: `/admin/content/tarot/edit/${c._id}`,
+    fields: [
+      { label: "Name", value: c.name },
+      { label: "Arcana", value: c.arcana },
+      { label: "Keywords", value: (c.keywords || []).join(", ") },
+      { label: "Description", value: c.description },
+      { label: "Status", value: c.isActive ? "Active" : "Inactive", badge: c.isActive ? "green" : "red" },
+    ],
   });
-};
-
-exports.newPlanetForm = (req, res) => {
-  res.render("planet_form", {
-    title: "Add Planet",
-    planet: null,
-    adminName: req.session.admin?.name || "Admin",
-    url: req.originalUrl,
-    messages: req.flash(),
-  });
-};
-
-exports.createPlanet = async (req, res) => {
-  try {
-    const { name, title, essence, quote, influenceTitle, influenceDescription, order } = req.body;
-    await Planet.create({ name, title, essence, quote, influenceTitle, influenceDescription, order: parseInt(order) || 0 });
-    req.flash("success", "Planet added successfully!");
-    res.redirect("/admin/content/planets");
-  } catch (err) {
-    console.error(err);
-    req.flash("error", "Failed to add planet.");
-    res.redirect("/admin/content/planets/add");
-  }
-};
-
-exports.editPlanetForm = async (req, res) => {
-  const planet = await Planet.findById(req.params.id);
-  if (!planet) {
-    req.flash("error", "Planet not found.");
-    return res.redirect("/admin/content/planets");
-  }
-  res.render("planet_form", {
-    title: "Edit Planet",
-    planet,
-    adminName: req.session.admin?.name || "Admin",
-    url: req.originalUrl,
-    messages: req.flash(),
-  });
-};
-
-exports.updatePlanet = async (req, res) => {
-  const { name, title, essence, quote, influenceTitle, influenceDescription, order } = req.body;
-  await Planet.findByIdAndUpdate(req.params.id, { name, title, essence, quote, influenceTitle, influenceDescription, order: parseInt(order) || 0 });
-  req.flash("success", "Planet updated successfully!");
-  res.redirect("/admin/content/planets");
-};
-
-exports.deletePlanet = async (req, res) => {
-  await Planet.findByIdAndDelete(req.params.id);
-  req.flash("success", "Planet deleted successfully!");
-  res.redirect("/admin/content/planets");
 };
 
 /* ===================== RITUAL CONTENT ===================== */
@@ -536,4 +449,42 @@ exports.deleteBreathingSession = async (req, res) => {
   await BreathingSession.findByIdAndDelete(req.params.id);
   req.flash("success", "Breathing session deleted successfully!");
   res.redirect("/admin/content/breathing");
+};
+
+
+
+exports.viewBreathingSession = async (req, res) => {
+  try {
+    const s = await BreathingSession.findById(req.params.id);
+    if (!s) return flashRedirect(req, res, "error", "Breathing session not found.", "/admin/content/breathing");
+
+    const benefits = (s.benefits || [])
+      .map((b) => `${b.label}${b.description ? " - " + b.description : ""}`)
+      .join("\n");
+
+    renderContentView(req, res, {
+      title: "View Breathing Session",
+      heading: s.title,
+      image: s.icon && s.icon.startsWith("/") ? s.icon : null,
+      backUrl: "/admin/content/breathing",
+      backLabel: "Breathing Sessions",
+      editUrl: `/admin/content/breathing/edit/${s._id}`,
+      fields: [
+        { label: "Title", value: s.title },
+        { label: "Subtitle", value: s.subtitle },
+        { label: "Icon", value: s.icon && !s.icon.startsWith("/") ? s.icon : "" },
+        { label: "Inhale (sec)", value: s.inhaleSeconds },
+        { label: "Hold (sec)", value: s.holdSeconds },
+        { label: "Exhale (sec)", value: s.exhaleSeconds },
+        { label: "Total Cycles", value: s.totalCycles },
+        { label: "Audio Type", value: s.audioType },
+        { label: "Cycle Phase", value: s.cyclePhaseKey },
+        { label: "Benefits", value: benefits },
+        { label: "Status", value: s.isActive ? "Active" : "Inactive", badge: s.isActive ? "green" : "red" },
+      ],
+    });
+  } catch (err) {
+    console.error(err);
+    flashRedirect(req, res, "error", "Something went wrong.", "/admin/content/breathing");
+  }
 };

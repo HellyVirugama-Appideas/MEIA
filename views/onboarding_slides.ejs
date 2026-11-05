@@ -128,7 +128,10 @@
                                                                 <tr class="slide-row"
                                                                     data-href="/admin/onboarding/edit/<%= s._id %>">
                                                                     <td>
-                                                                        <%= index + 1 + ((typeof pagination !== 'undefined' && pagination?.page) ? (pagination.page - 1) * (pagination.limit || 25) : 0) %>
+                                                                        <%= index + 1 + ((typeof pagination
+                                                                            !=='undefined' && pagination?.page) ?
+                                                                            (pagination.page - 1) * (pagination.limit ||
+                                                                            25) : 0) %>
                                                                     </td>
                                                                     <td>
                                                                         <%= s.order %>
@@ -155,6 +158,11 @@
                                                                         </span>
                                                                     </td>
                                                                     <td class="actions-column">
+                                                                        <a href="/admin/onboarding/view/<%= s._id %>"
+                                                                            class="waves-effect waves-light"
+                                                                            title="View">
+                                                                            <i class="material-icons">visibility</i>
+                                                                        </a>
                                                                         <a href="/admin/onboarding/edit/<%= s._id %>"
                                                                             class="waves-effect waves-light accent-2 btn-edit"
                                                                             title="Edit">

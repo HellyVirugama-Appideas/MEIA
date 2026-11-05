@@ -98,84 +98,92 @@
                             <div class="col s12">
                                 <div class="card">
                                     <div class="card-content">
-                                          <%- include('messages', { messages: messages }) %>
+                                        <%- include('messages', { messages: messages }) %>
 
-                                        <div class="row">
-                                            <div class="col s12 overflow">
-                                                <table id="page-length-option" class="display">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Sr</th>
-                                                            <th>Image</th>
-                                                            <th>Element</th>
-                                                            <th>Title</th>
-                                                            <th>Description</th>
-                                                            <th>Status</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% elements.forEach(function(el,index){ %>
-                                                            <tr class="element-row"
-                                                                data-href="/admin/rhythm/elemental-states/edit/<%= el._id %>">
-                                                                <td>
-                                                                    <%= index + 1 + ((typeof pagination !=='undefined'
-                                                                        && pagination?.page) ? (pagination.page - 1) *
-                                                                        (pagination.limit || 25) : 0) %>
-                                                                </td>
-                                                                <td>
-                                                                    <% if(el.image){ %>
-                                                                        <img src="<%= el.image %>"
-                                                                            style="width:60px;height:60px;object-fit:cover;border-radius:8px">
-                                                                        <% } else { %>
-                                                                            —
-                                                                            <% } %>
-                                                                </td>
-                                                                <td>
-                                                                    <span class="chip">
-                                                                        <%= el.element %>
-                                                                    </span>
-                                                                </td>
-                                                                <td class="title-cell" title="<%= el.title %>">
-                                                                    <%= el.title %>
-                                                                </td>
-                                                                <td class="desc-cell"
-                                                                    title="<%= el.description || '' %>">
-                                                                    <%= el.description ? el.description.substring(0,60)
-                                                                        + '...' : '' %>
-                                                                </td>
-                                                                <td>
-                                                                    <% if(el.isActive){ %>
-                                                                        <span
-                                                                            class="badge green white-text">Active</span>
-                                                                        <% } else { %>
-                                                                            <span
-                                                                                class="badge red white-text">Inactive</span>
-                                                                            <% } %>
-                                                                </td>
-                                                                <td class="actions-column">
-                                                                    <a href="/admin/rhythm/elemental-states/edit/<%= el._id %>"
-                                                                        class="waves-effect waves-light accent-2 btn-edit"
-                                                                        title="Edit">
-                                                                        <i class="material-icons">edit</i>
-                                                                    </a>
-                                                                </td>
+                                            <div class="row">
+                                                <div class="col s12 overflow">
+                                                    <table id="page-length-option" class="display">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Sr</th>
+                                                                <th>Image</th>
+                                                                <th>Element</th>
+                                                                <th>Title</th>
+                                                                <th>Description</th>
+                                                                <th>Status</th>
+                                                                <th>Actions</th>
                                                             </tr>
-                                                            <% }) %>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% elements.forEach(function(el,index){ %>
+                                                                <tr class="element-row"
+                                                                    data-href="/admin/rhythm/elemental-states/edit/<%= el._id %>">
+                                                                    <td>
+                                                                        <%= index + 1 + ((typeof pagination
+                                                                            !=='undefined' && pagination?.page) ?
+                                                                            (pagination.page - 1) * (pagination.limit ||
+                                                                            25) : 0) %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if(el.image){ %>
+                                                                            <img src="<%= el.image %>"
+                                                                                style="width:60px;height:60px;object-fit:cover;border-radius:8px">
+                                                                            <% } else { %>
+                                                                                —
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="chip">
+                                                                            <%= el.element %>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="title-cell" title="<%= el.title %>">
+                                                                        <%= el.title %>
+                                                                    </td>
+                                                                    <td class="desc-cell"
+                                                                        title="<%= el.description || '' %>">
+                                                                        <%= el.description ?
+                                                                            el.description.substring(0,60) + '...' : ''
+                                                                            %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if(el.isActive){ %>
+                                                                            <span
+                                                                                class="badge green white-text">Active</span>
+                                                                            <% } else { %>
+                                                                                <span
+                                                                                    class="badge red white-text">Inactive</span>
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td class="actions-column">
+                                                                        <a href="/admin/rhythm/elemental-states/view/<%= el._id %>"
+                                                                            class="waves-effect waves-light"
+                                                                            title="View">
+                                                                            <i class="material-icons">visibility</i>
+                                                                        </a>
+                                                                        <a href="/admin/rhythm/elemental-states/edit/<%= el._id %>"
+                                                                            class="waves-effect waves-light accent-2 btn-edit"
+                                                                            title="Edit">
+                                                                            <i class="material-icons">edit</i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
 
-                                                                <% if(!elements.length){ %>
-                                                                    <tr>
-                                                                        <td colspan="6" class="center-align grey-text">
-                                                                            No elemental state content found. Please
-                                                                            seed the 4
-                                                                            elements first.
-                                                                        </td>
-                                                                    </tr>
-                                                                    <% } %>
-                                                    </tbody>
-                                                </table>
+                                                                    <% if(!elements.length){ %>
+                                                                        <tr>
+                                                                            <td colspan="6"
+                                                                                class="center-align grey-text">
+                                                                                No elemental state content found. Please
+                                                                                seed the 4
+                                                                                elements first.
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% } %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

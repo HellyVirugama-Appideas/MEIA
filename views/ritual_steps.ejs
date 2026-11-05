@@ -126,6 +126,12 @@
                                                                             <%= s.isActive ? 'Yes' : 'No' %>
                                                                         </span></td>
                                                                     <td class="actions-column">
+                                                                        <a href="/admin/content/ritual/view/<%= s._id %>"
+                                                                            class="waves-effect waves-light"
+                                                                            title="View">
+                                                                            <i class="material-icons">visibility</i>
+                                                                        </a>
+                                                                        &nbsp;&nbsp;
                                                                         <a href="/admin/content/ritual/edit/<%= s._id %>"
                                                                             class="waves-effect waves-light accent-2 btn-edit"
                                                                             title="Edit">

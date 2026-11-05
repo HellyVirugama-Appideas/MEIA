@@ -27,6 +27,9 @@ router.post(
 );
 router.get("/daily/delete/:id", requireAdminAuth, checkPermission(MODULE, "isDelete"), readingController.deleteDaily);
 
+router.get("/daily/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), readingController.viewDaily);
+router.get("/weekly/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), readingController.viewWeekly);
+
 /* ===================== WEEKLY READINGS ===================== */
 router.get("/weekly", requireAdminAuth, checkPermission(MODULE, "isView"), readingController.listWeekly);
 router.get("/weekly/add", requireAdminAuth, checkPermission(MODULE, "isAdd"), readingController.newWeeklyForm);

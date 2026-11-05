@@ -103,4 +103,10 @@ router.get("/powered-by/edit/:id", requireAdminAuth, checkPermission(MODULE, "is
 router.post("/powered-by/:id", requireAdminAuth, checkPermission(MODULE, "isEdit"), celestialContentController.updatePoweredBy);
 router.get("/powered-by/delete/:id", requireAdminAuth, checkPermission(MODULE, "isDelete"), celestialContentController.deletePoweredBy);
 
+router.get("/moon-phases/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), celestialContentController.viewMoonPhase);
+router.get("/planets/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), celestialContentController.viewPlanet);
+
+router.get("/zodiac-signs/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), celestialContentController.viewZodiac);
+router.get("/birth-chart-personality/view/:id", requireAdminAuth, checkPermission(MODULE, "isView"), celestialContentController.viewBirthChartContent);
+
 module.exports = router;

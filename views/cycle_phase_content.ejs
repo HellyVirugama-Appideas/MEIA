@@ -113,87 +113,95 @@
                             <div class="col s12">
                                 <div class="card">
                                     <div class="card-content">
-                                          <%- include('messages', { messages: messages }) %>
+                                        <%- include('messages', { messages: messages }) %>
 
-                                        <div class="row">
-                                            <div class="col s12 overflow">
-                                                <table id="page-length-option" class="display">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Sr</th>
-                                                            <th>Image</th>
-                                                            <th>Phase Key</th>
-                                                            <th>Title</th>
-                                                            <th>Description</th>
-                                                            <th>Status</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% phases.forEach(function(phase,index){ %>
-                                                            <tr class="phase-row"
-                                                                data-href="/admin/rhythm/cycle-phases/edit/<%= phase._id %>">
-                                                                <td>
-                                                                    <%= index + 1 + ((typeof pagination !=='undefined'
-                                                                        && pagination?.page) ? (pagination.page - 1) *
-                                                                        (pagination.limit || 25) : 0) %>
-                                                                </td>
-                                                                <td>
-                                                                    <% if(phase.image){ %>
-                                                                        <img src="<%= phase.image %>"
-                                                                            style="width:60px;height:60px;object-fit:cover;border-radius:8px">
-                                                                        <% } else { %>
-                                                                            —
-                                                                            <% } %>
-                                                                </td>
-                                                                <td>
-                                                                    <span class="chip">
-                                                                        <%= phase.phaseKey %>
-                                                                    </span>
-                                                                </td>
-                                                                <td class="title-cell" title="<%= phase.title %>">
-                                                                    <%= phase.title %>
-                                                                </td>
-                                                                <td class="desc-cell"
-                                                                    title="<%= phase.description || '' %>">
-                                                                    <%= phase.description ?
-                                                                        phase.description.substring(0,60) + '...' : ''
-                                                                        %>
-                                                                </td>
-                                                                <td>
-                                                                    <% if(phase.isActive){ %>
-                                                                        <span
-                                                                            class="badge green white-text">Active</span>
-                                                                        <% } else { %>
-                                                                            <span
-                                                                                class="badge red white-text">Inactive</span>
-                                                                            <% } %>
-                                                                </td>
-                                                                <td class="actions-column">
-                                                                    <a href="/admin/rhythm/cycle-phases/edit/<%= phase._id %>"
-                                                                        class="waves-effect waves-light accent-2 btn-edit"
-                                                                        title="Edit">
-                                                                        <i class="material-icons">edit</i>
-                                                                    </a>
-                                                                </td>
+                                            <div class="row">
+                                                <div class="col s12 overflow">
+                                                    <table id="page-length-option" class="display">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Sr</th>
+                                                                <th>Image</th>
+                                                                <th>Phase Key</th>
+                                                                <th>Title</th>
+                                                                <th>Description</th>
+                                                                <th>Status</th>
+                                                                <th>Actions</th>
                                                             </tr>
-                                                            <% }) %>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% phases.forEach(function(phase,index){ %>
+                                                                <tr class="phase-row"
+                                                                    data-href="/admin/rhythm/cycle-phases/edit/<%= phase._id %>">
+                                                                    <td>
+                                                                        <%= index + 1 + ((typeof pagination
+                                                                            !=='undefined' && pagination?.page) ?
+                                                                            (pagination.page - 1) * (pagination.limit ||
+                                                                            25) : 0) %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if(phase.image){ %>
+                                                                            <img src="<%= phase.image %>"
+                                                                                style="width:60px;height:60px;object-fit:cover;border-radius:8px">
+                                                                            <% } else { %>
+                                                                                —
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="chip">
+                                                                            <%= phase.phaseKey %>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="title-cell" title="<%= phase.title %>">
+                                                                        <%= phase.title %>
+                                                                    </td>
+                                                                    <td class="desc-cell"
+                                                                        title="<%= phase.description || '' %>">
+                                                                        <%= phase.description ?
+                                                                            phase.description.substring(0,60) + '...'
+                                                                            : '' %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if(phase.isActive){ %>
+                                                                            <span
+                                                                                class="badge green white-text">Active</span>
+                                                                            <% } else { %>
+                                                                                <span
+                                                                                    class="badge red white-text">Inactive</span>
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td class="actions-column">
+                                                                        <a href="/admin/rhythm/cycle-phases/view/<%= phase._id %>"
+                                                                            class="waves-effect waves-light"
+                                                                            title="View">
+                                                                            <i class="material-icons">visibility</i>
+                                                                        </a>
+                                                                        &nbsp;&nbsp;
+                                                                        <a href="/admin/rhythm/cycle-phases/edit/<%= phase._id %>"
+                                                                            class="waves-effect waves-light accent-2 btn-edit"
+                                                                            title="Edit">
+                                                                            <i class="material-icons">edit</i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
 
-                                                                <% if(!phases.length){ %>
-                                                                    <tr>
-                                                                        <td colspan="6" class="center-align grey-text">
-                                                                            No cycle phase content found. Click "Add
-                                                                            Phase Content"
-                                                                            above to create the 4 phases (Menstrual,
-                                                                            Follicular,
-                                                                            Ovulation, Bloom).
-                                                                        </td>
-                                                                    </tr>
-                                                                    <% } %>
-                                                    </tbody>
-                                                </table>
+                                                                    <% if(!phases.length){ %>
+                                                                        <tr>
+                                                                            <td colspan="6"
+                                                                                class="center-align grey-text">
+                                                                                No cycle phase content found. Click "Add
+                                                                                Phase Content"
+                                                                                above to create the 4 phases (Menstrual,
+                                                                                Follicular,
+                                                                                Ovulation, Bloom).
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% } %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

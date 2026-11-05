@@ -2,10 +2,25 @@ const CyclePhaseContent = require("../../models/CyclePhaseContent");
 const ElementalStateContent = require("../../models/ElementalStateContent");
 const PhysicalSymptomOption = require("../../models/PhysicalSymptomOption");
 
+
 const flashRedirect = (req, res, type, message, url) => {
   req.flash(type, message);
   req.session.save(() => res.redirect(url));
 };
+
+const renderContentView = (req, res, data) =>
+  res.render("content_view", {
+    adminName: req.session.admin?.name || "Admin",
+    url: req.originalUrl,
+    messages: req.flash(),
+    ...data,
+  });
+
+const statusField = (isActive) => ({
+  label: "Status",
+  value: isActive ? "Active" : "Inactive",
+  badge: isActive ? "green" : "red",
+});
 
 /* ============================================================
    CYCLE PHASE CONTENT (menstrual / follicular / ovulation / luteal)
@@ -155,6 +170,82 @@ exports.updateCyclePhase = async (req, res) => {
     console.log(err);
     req.flash("error", err.message);
     res.redirect("/admin/rhythm/cycle-phases/edit/" + req.params.id);
+  }
+};
+
+
+exports.viewCyclePhase = async (req, res) => {
+  try {
+    const p = await CyclePhaseContent.findById(req.params.id);
+    if (!p) return flashRedirect(req, res, "error", "Phase content not found.", "/admin/rhythm/cycle-phases");
+
+    renderContentView(req, res, {
+      title: "View Cycle Phase",
+      heading: p.title || p.phaseKey,
+      image: p.image,
+      backUrl: "/admin/rhythm/cycle-phases",
+      backLabel: "Cycle Phase Content",
+      editUrl: `/admin/rhythm/cycle-phases/edit/${p._id}`,
+      fields: [
+        { label: "Phase Key", value: p.phaseKey },
+        { label: "Title", value: p.title },
+        { label: "Description", value: p.description },
+        { label: "Tips", value: (p.tips || []).join(", ") },
+        statusField(p.isActive),
+      ],
+    });
+  } catch (err) {
+    console.log(err);
+    flashRedirect(req, res, "error", "Something went wrong.", "/admin/rhythm/cycle-phases");
+  }
+};
+
+exports.viewElementalState = async (req, res) => {
+  try {
+    const e = await ElementalStateContent.findById(req.params.id);
+    if (!e) return flashRedirect(req, res, "error", "Elemental state not found.", "/admin/rhythm/elemental-states");
+
+    renderContentView(req, res, {
+      title: "View Elemental State",
+      heading: e.title || e.element,
+      image: e.image,
+      backUrl: "/admin/rhythm/elemental-states",
+      backLabel: "Elemental State Content",
+      editUrl: `/admin/rhythm/elemental-states/edit/${e._id}`,
+      fields: [
+        { label: "Element", value: e.element },
+        { label: "Title", value: e.title },
+        { label: "Description", value: e.description },
+        statusField(e.isActive),
+      ],
+    });
+  } catch (err) {
+    console.log(err);
+    flashRedirect(req, res, "error", "Something went wrong.", "/admin/rhythm/elemental-states");
+  }
+};
+
+exports.viewSymptomOption = async (req, res) => {
+  try {
+    const o = await PhysicalSymptomOption.findById(req.params.id);
+    if (!o) return flashRedirect(req, res, "error", "Symptom option not found.", "/admin/rhythm/symptom-options");
+
+    renderContentView(req, res, {
+      title: "View Symptom Option",
+      heading: o.name,
+      image: o.icon,
+      backUrl: "/admin/rhythm/symptom-options",
+      backLabel: "Physical Symptom Options",
+      editUrl: `/admin/rhythm/symptom-options/edit/${o._id}`,
+      fields: [
+        { label: "Name", value: o.name },
+        { label: "Order", value: o.order },
+        statusField(o.isActive),
+      ],
+    });
+  } catch (err) {
+    console.log(err);
+    flashRedirect(req, res, "error", "Something went wrong.", "/admin/rhythm/symptom-options");
   }
 };
 

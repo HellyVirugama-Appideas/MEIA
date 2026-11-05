@@ -17,7 +17,7 @@ const run = async () => {
     await db.collection(collectionName).drop();
     console.log(`Dropped "${collectionName}" collection successfully.`);
     console.log(
-      "It will be recreated automatically (with the correct schema) the next time you open /admin/content/moon-phases."
+      "It will be recreated automatically (with the correct schema) the next time you open /admin/celestial/moon-phases."
     );
   }
 

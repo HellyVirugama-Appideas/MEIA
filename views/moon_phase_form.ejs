@@ -16,7 +16,7 @@
                         <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
                             <ol class="breadcrumbs mb-0">
                                 <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                                <li class="breadcrumb-item"><a href="/admin/content/moon-phases">Moon Phase Content</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/celestial/moon-phases">Moon Phase Content</a></li>
                                 <li class="breadcrumb-item active"><%= title %></li>
                             </ol>
                         </div>
@@ -31,7 +31,7 @@
                     <div class="col s12">
                         <div class="card-content">
                             <form method="POST"
-                                  action="/admin/content/moon-phases/<%= phase._id %>"
+                                  action="/admin/celestial/moon-phases/<%= phase._id %>"
                                   enctype="multipart/form-data">
                                 <div class="input-field col s12">
                                     <label for="phaseName" class="active">Phase Name</label>
@@ -70,7 +70,7 @@
                                     <div class="col s12 display-flex justify-content-end">
                                         <button class="btn btn-edit" type="submit">Update</button>
                                         &nbsp;&nbsp;
-                                        <a class="btn btn-delete" href="/admin/content/moon-phases">Cancel</a>
+                                        <a class="btn btn-delete" href="/admin/celestial/moon-phases">Cancel</a>
                                     </div>
                                 </div>
                             </form>

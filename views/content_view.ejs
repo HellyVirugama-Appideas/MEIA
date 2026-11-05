@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+
+    <style>
+        .view-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        .view-card .card-content { padding: 28px; }
+
+        .view-heading {
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.35;
+            margin: 0 0 6px;
+            color: #263238;
+            word-break: break-word;
+        }
+        .heading-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            color: #fff;
+            white-space: nowrap;
+            letter-spacing: .3px;
+        }
+        .status-badge.green  { background: #43a047; }
+        .status-badge.red    { background: #e53935; }
+        .status-badge.orange { background: #fb8c00; }
+        .status-badge.blue   { background: #1e88e5; }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label {
+            color: #78909c;
+            font-weight: 500;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding-top: 2px;
+        }
+        .info-value {
+            font-weight: 600;
+            color: #263238;
+            text-align: right;
+            flex: 1 1 auto;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .view-image-box {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #eee;
+            background: #fafafa;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        }
+        .view-image-box img {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .view-card .card-action {
+            background: #fafafa;
+            border-top: 1px solid #eee;
+            padding: 14px 24px;
+        }
+
+        .long-card {
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        }
+        .long-card .card-content { padding: 22px 28px; }
+        .long-card h6 {
+            font-weight: 700;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: #6a1b9a;
+            margin: 0 0 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .long-text {
+            font-size: 15px;
+            line-height: 1.85;
+            color: #424242;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media (max-width: 600px) {
+            .view-card .card-content,
+            .long-card .card-content { padding: 18px; }
+            .heading-row { flex-direction: column; gap: 8px; }
+            .view-heading { font-size: 19px; }
+            .info-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .info-value { text-align: left; width: 100%; }
+            .view-card .card-action { text-align: center; }
+        }
+    </style>
+</head>
+
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%
+        const hasImage = (typeof image !== 'undefined' && image);
+        const hasEdit  = (typeof editUrl !== 'undefined' && editUrl);
+        const isLong   = (f) => typeof f.value === 'string' && (f.value.length > 120 || f.value.indexOf('\n') !== -1);
+
+        const badges = fields.filter((f) => f.badge);
+        const shorts = fields.filter((f) => !f.badge && !isLong(f));
+        const longs  = fields.filter((f) => !f.badge && isLong(f));
+    %>
+
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+        <div class="row">
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <%- include('messages', { messages: messages }) %>
+                        <div class="col s12 m6 l6">
+                            <h6 class="breadcrumbs-title"><span><%= title %></span></h6>
+                        </div>
+                        <div class="col s12 m6 l6 right-align-md" style="margin-top:-10px;">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="<%= backUrl %>"><%= backLabel %></a></li>
+                                <li class="breadcrumb-item active">View</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12">
+            <div class="container">
+                <div class="section">
+
+                    <!-- ===== Main card ===== -->
+                    <div class="card view-card">
+                        <div class="card-content">
+                            <div class="row" style="margin-bottom:0;">
+
+                                <!-- LEFT: short fields -->
+                                <div class="col s12 <%= hasImage ? 'l6' : 'l12' %>">
+                                    <div class="heading-row">
+                                        <h5 class="view-heading"><%= heading %></h5>
+                                        <% if (badges.length) { %>
+                                            <div>
+                                                <% badges.forEach(function(b){ %>
+                                                    <span class="status-badge <%= b.badge %>"><%= b.value %></span>
+                                                <% }) %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+
+                                    <% shorts.forEach(function(f){ %>
+                                        <div class="info-row">
+                                            <span class="info-label"><%= f.label %></span>
+                                            <span class="info-value">
+                                                <%= (f.value !== undefined && f.value !== null && f.value !== '') ? f.value : '-' %>
+                                            </span>
+                                        </div>
+                                    <% }) %>
+                                </div>
+
+                                <!-- RIGHT: image -->
+                                <% if (hasImage) { %>
+                                    <div class="col s12 l6">
+                                        <div class="view-image-box">
+                                            <img src="<%= image %>" alt="<%= heading %>">
+                                        </div>
+                                    </div>
+                                <% } %>
+
+                            </div>
+                        </div>
+
+                        <div class="card-action right-align">
+                            <a href="<%= backUrl %>" class="btn-flat waves-effect">
+                                <i class="material-icons left">arrow_back</i>Back
+                            </a>
+                            <% if (hasEdit) { %>
+                                <a href="<%= editUrl %>" class="btn waves-effect waves-light purple">
+                                    <i class="material-icons left">edit</i>Edit
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- ===== Long content cards ===== -->
+                    <% longs.forEach(function(f){ %>
+                        <div class="card long-card">
+                            <div class="card-content">
+                                <h6><%= f.label %></h6>
+                                <div class="long-text"><%= f.value %></div>
+                            </div>
+                        </div>
+                    <% }) %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('_layouts/commonJs') %>
+</body>
+</html>

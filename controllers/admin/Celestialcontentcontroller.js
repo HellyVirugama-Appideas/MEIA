@@ -634,11 +634,33 @@ const PoweredByContent = require("../../models/PoweredByContent");
    MOON PHASE INFO (8 fixed phases) -> list + edit only
 ============================================================ */
 
+const flashRedirect = (req, res, type, message, url) => {
+  req.flash(type, message);
+  req.session.save(() => res.redirect(url));
+};
+
+const buildFields = (doc, skip = []) => {
+  const hidden = ["_id", "__v", "createdAt", "updatedAt", "image", "icon", ...skip];
+  return Object.entries(doc.toObject())
+    .filter(([key]) => !hidden.includes(key))
+    .map(([key, val]) => {
+      let value = val;
+      if (typeof val === "boolean") value = val ? "Yes" : "No";
+      else if (Array.isArray(val))
+        value = val.map((x) => (typeof x === "object" ? JSON.stringify(x) : x)).join(", ");
+      else if (val && typeof val === "object") value = JSON.stringify(val);
+      return {
+        label: key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase()),
+        value,
+      };
+    });
+};
+
 exports.listMoonPhases = async (req, res) => {
   try {
     const phases = await MoonPhaseInfo.find().sort({ phaseName: 1 });
 
-    res.render("moon_phase_info", {
+    res.render("moon_phases", {
       title: "Moon Phase Content",
       phases,
       adminName: req.session.admin?.name || "Admin",
@@ -700,6 +722,59 @@ exports.updateMoonPhase = async (req, res) => {
     res.redirect("/admin/celestial/moon-phases/edit/" + req.params.id);
   }
 };
+
+/* ===================== VIEW PAGES ===================== */
+const renderContentView = (req, res, data) =>
+  res.render("content_view", {
+    adminName: req.session.admin?.name || "Admin",
+    url: req.originalUrl,
+    messages: req.flash(),
+    ...data,
+  });
+
+exports.viewMoonPhase = async (req, res) => {
+  const p = await MoonPhaseInfo.findById(req.params.id);
+  if (!p) return flashRedirect(req, res, "error", "Moon phase not found.", "/admin/celestial/moon-phases");
+
+  renderContentView(req, res, {
+    title: "View Moon Phase",
+    heading: p.phaseName,
+    image: p.image,
+    backUrl: "/admin/celestial/moon-phases",
+    backLabel: "Moon Phase Content",
+    editUrl: `/admin/celestial/moon-phases/edit/${p._id}`,
+    fields: [
+      { label: "Phase", value: p.phaseName },
+      { label: "Keywords", value: (p.keywords || []).join(", ") },
+      { label: "Description", value: p.description },
+      { label: "Guide Content", value: p.guideContent },
+    ],
+  });
+};
+
+exports.viewPlanet = async (req, res) => {
+  const p = await Planet.findById(req.params.id);
+  if (!p) return flashRedirect(req, res, "error", "Planet not found.", "/admin/celestial/planets");
+
+  renderContentView(req, res, {
+    title: "View Planet",
+    heading: p.name,
+    image: p.icon,
+    backUrl: "/admin/celestial/planets",
+    backLabel: "Planets",
+    editUrl: `/admin/celestial/planets/edit/${p._id}`,
+    fields: [
+      { label: "Name", value: p.name },
+      { label: "Title", value: p.title },
+      { label: "Order", value: p.order },
+      { label: "Essence", value: p.essence },
+      { label: "Quote", value: p.quote },
+      { label: "Influence Title", value: p.influenceTitle },
+      { label: "Influence Description", value: p.influenceDescription },
+    ],
+  });
+};
+
 
 /* ============================================================
    PLANETS -> full CRUD
@@ -1219,6 +1294,49 @@ exports.updateZodiacSign = async (req, res) => {
     res.redirect("/admin/celestial/zodiac-signs/edit/" + req.params.id);
   }
 };
+
+
+exports.viewZodiac = async (req, res) => {
+  const z = await ZodiacSignContent.findById(req.params.id);
+  if (!z) return flashRedirect(req, res, "error", "Zodiac not found.", "/admin/celestial/zodiac-signs");
+
+  renderContentView(req, res, {
+    title: "View Zodiac Sign",
+    heading: z.signName,
+    image: z.icon,
+    backUrl: "/admin/celestial/zodiac-signs",
+    backLabel: "Zodiac Sign Content",
+    editUrl: `/admin/celestial/zodiac-signs/edit/${z._id}`,
+    fields: [
+      { label: "Sign", value: z.signName },
+      { label: "Description", value: z.description },
+      { label: "Status", value: z.isActive ? "Active" : "Inactive", badge: z.isActive ? "green" : "red" },
+    ],
+  });
+};
+
+exports.viewBirthChartContent = async (req, res) => {
+  const b = await BirthChartPersonalityContent.findById(req.params.id);
+  if (!b) return flashRedirect(req, res, "error", "Content not found.", "/admin/celestial/birth-chart-personality");
+
+  renderContentView(req, res, {
+    title: "View Birth Chart Personality",
+    heading: b.sunSign,
+    image: null,
+    backUrl: "/admin/celestial/birth-chart-personality",
+    backLabel: "Birth Chart Personality",
+    editUrl: `/admin/celestial/birth-chart-personality/edit/${b._id}`,
+    fields: [
+      { label: "Sun Sign", value: b.sunSign },
+      { label: "Personality Summary", value: b.personalitySummary },
+      { label: "Strengths", value: (b.strengths || []).join(", ") },
+      { label: "Growth Areas", value: (b.growthAreas || []).join(", ") },
+      { label: "Cosmic Gift", value: b.cosmicGift },
+      { label: "Status", value: b.isActive ? "Active" : "Inactive", badge: b.isActive ? "green" : "red" },
+    ],
+  });
+};
+
 
 /* ============================================================
    BIRTH CHART PERSONALITY CONTENT (12 fixed Sun Signs)

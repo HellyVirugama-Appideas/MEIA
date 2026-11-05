@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html class="loading" lang="en" data-textdirection="ltr">
+
 <head>
     <%- include('_layouts/head') %>
     <title><%= title %></title>
 
     <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="/app-assets/vendors/data-tables/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="/app-assets/css/pages/data-tables.css">
 
     <style>
-        table tr td, th { text-align: center; }
+        table tr td,
+        th {
+            text-align: center;
+        }
 
         .desc-cell {
-            max-width: 260px;
+            max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -24,26 +29,33 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+
         tr.birthchart-row:hover {
             background-color: #f5f5f5 !important;
         }
+
         td.actions-column {
             cursor: default;
         }
+
         td.actions-column a {
             pointer-events: auto !important;
         }
     </style>
 </head>
-<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
-      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+<body
+    class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+    data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
     <%- include('_layouts/sidenavbar') %>
     <div id="main">
         <div class="row">
             <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
                 <div class="container">
                     <div class="row">
-                        <div class="col s12 m6 l6"><h6 class="breadcrumbs-title"><span><%= title %></span></h6></div>
+                        <div class="col s12 m6 l6">
+                            <h6 class="breadcrumbs-title"><span><%= title %></span></h6>
+                        </div>
                         <div class="col s12 m6 l6 right-align-md" style="margin-top: -10px;">
                             <ol class="breadcrumbs mb-0">
                                 <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
@@ -60,7 +72,8 @@
                 <div class="row">
                     <%- include('messages', { messages: messages }) %>
                     <div class="col s12 right-align-md">
-                        <a href="/admin/celestial/birth-chart-personality/add" class="btn pull-right btn-add btn-breadcrumbs white-text">
+                        <a href="/admin/celestial/birth-chart-personality/add"
+                            class="btn pull-right btn-add btn-breadcrumbs white-text">
                             <i class="material-icons left">add</i>Add New Sun Sign
                         </a>
                     </div>
@@ -80,7 +93,7 @@
                                             <table id="page-length-option" class="display">
                                                 <thead>
                                                     <tr>
-                                                          <th>Sr</th>
+                                                        <th>Sr</th>
                                                         <th>Sun Sign</th>
                                                         <th>Summary</th>
                                                         <th>Strengths</th>
@@ -91,18 +104,55 @@
                                                 </thead>
                                                 <tbody>
                                                     <% if(items && items.length > 0){ %>
-                                                        <% items.forEach((item, index) => { %>
-                                                            <tr class="birthchart-row" data-href="/admin/celestial/birth-chart-personality/edit/<%= item._id %>">
-                                                                
+                                                        <% items.forEach((item, index)=> { %>
+                                                            <tr class="birthchart-row"
+                                                                data-href="/admin/celestial/birth-chart-personality/edit/<%= item._id %>">
+
                                                                 <td>
-                                                                        <%= index + 1 + ((typeof pagination !== 'undefined' && pagination?.page) ? (pagination.page - 1) * (pagination.limit || 25) : 0) %>
-                                                                    </td>
-                                                                <td><span class="chip"><%= item.sunSign %></span></td>
-                                                                <td class="desc-cell" title="<%= item.personalitySummary || '' %>">
-                                                                    <%= item.personalitySummary ? item.personalitySummary.substring(0,50) + '...' : '-' %>
+                                                                    <%= index + 1 + ((typeof pagination !== 'undefined' && pagination?.page) ? (pagination.page - 1) * (pagination.limit || 25) : 0) %>
                                                                 </td>
-                                                                <td><%= (item.strengths && item.strengths.length) ? item.strengths.join(', ') : '-' %></td>
-                                                                <td><%= (item.growthAreas && item.growthAreas.length) ? item.growthAreas.join(', ') : '-' %></td>
+
+                                                                <td>
+                                                                    <span class="chip"><%= item.sunSign %></span>
+                                                                </td>
+
+                                                                <!-- Summary - Truncated -->
+                                                                <td class="desc-cell" title="<%= item.personalitySummary || '' %>">
+                                                                    <% if(item.personalitySummary) { %>
+                                                                        <%= item.personalitySummary.length > 50 
+                                                                            ? item.personalitySummary.substring(0, 50) + '...' 
+                                                                            : item.personalitySummary %>
+                                                                    <% } else { %>
+                                                                        -
+                                                                    <% } %>
+                                                                </td>
+
+                                                                <!-- Strengths - Truncated -->
+                                                                <td class="desc-cell" title="<%= (item.strengths && item.strengths.length) ? item.strengths.join(', ') : '' %>">
+                                                                    <% if(item.strengths && item.strengths.length) { 
+                                                                        const strengthsText = item.strengths.join(', ');
+                                                                    %>
+                                                                        <%= strengthsText.length > 40 
+                                                                            ? strengthsText.substring(0, 40) + '...' 
+                                                                            : strengthsText %>
+                                                                    <% } else { %>
+                                                                        -
+                                                                    <% } %>
+                                                                </td>
+
+                                                                <!-- Growth Areas - Truncated -->
+                                                                <td class="desc-cell" title="<%= (item.growthAreas && item.growthAreas.length) ? item.growthAreas.join(', ') : '' %>">
+                                                                    <% if(item.growthAreas && item.growthAreas.length) { 
+                                                                        const growthText = item.growthAreas.join(', ');
+                                                                    %>
+                                                                        <%= growthText.length > 40 
+                                                                            ? growthText.substring(0, 40) + '...' 
+                                                                            : growthText %>
+                                                                    <% } else { %>
+                                                                        -
+                                                                    <% } %>
+                                                                </td>
+
                                                                 <td>
                                                                     <% if(item.isActive){ %>
                                                                         <span class="badge green white-text">Active</span>
@@ -110,7 +160,13 @@
                                                                         <span class="badge red white-text">Inactive</span>
                                                                     <% } %>
                                                                 </td>
+
                                                                 <td class="actions-column">
+                                                                    <a href="/admin/celestial/birth-chart-personality/view/<%= item._id %>"
+                                                                        class="waves-effect waves-light" title="View">
+                                                                        <i class="material-icons">visibility</i>
+                                                                    </a>
+                                                                    &nbsp;&nbsp;
                                                                     <a href="/admin/celestial/birth-chart-personality/edit/<%= item._id %>"
                                                                         class="waves-effect waves-light accent-2 btn-edit" title="Edit">
                                                                         <i class="material-icons">edit</i>
@@ -119,7 +175,11 @@
                                                             </tr>
                                                         <% }) %>
                                                     <% } else { %>
-                                                        <tr><td colspan="6" class="center-align grey-text">No content found. Click "Add New Sun Sign" above to create one.</td></tr>
+                                                        <tr>
+                                                            <td colspan="7" class="center-align grey-text">
+                                                                No content found. Click "Add New Sun Sign" above to create one.
+                                                            </td>
+                                                        </tr>
                                                     <% } %>
                                                 </tbody>
                                             </table>
@@ -132,14 +192,11 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <%- include('_layouts/commonJs') %>
 
     <script src="/app-assets/vendors/data-tables/js/jquery.dataTables.min.js"></script>
     <script src="/app-assets/js/scripts/data-tables.js"></script>
-
-  
 </body>
 </html>

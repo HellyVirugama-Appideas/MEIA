@@ -98,3 +98,24 @@ exports.deleteSlide = async (req, res) => {
   req.flash("success", "Onboarding slide deleted successfully!");
   res.redirect("/admin/onboarding");
 };
+
+exports.viewSlide = async (req, res) => {
+  try {
+    const slide = await OnboardingSlide.findById(req.params.id);
+    if (!slide) {
+      req.flash("error", "Slide not found.");
+      return req.session.save(() => res.redirect("/admin/onboarding"));
+    }
+    res.render("onboarding_slide_view", {
+      title: "View Onboarding Slide",
+      slide,
+      adminName: req.session.admin?.name || "Admin",
+      url: req.originalUrl,
+      messages: req.flash(),
+    });
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong.");
+    req.session.save(() => res.redirect("/admin/onboarding"));
+  }
+};

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <%- include('_layouts/head') %>
+    <title><%= title %></title>
+    <style>
+        .slide-view-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .slide-image-wrapper {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 220px;
+        }
+        .slide-image-wrapper img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 10px;
+            object-fit: contain;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .info-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #78909c;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .info-value {
+            font-size: 15px;
+            color: #263238;
+            margin-bottom: 18px;
+            word-break: break-word;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .status-active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-inactive {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .action-buttons {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #eceff1;
+        }
+        .action-buttons .btn {
+            margin-right: 10px;
+            border-radius: 6px;
+            text-transform: none;
+            font-weight: 500;
+            padding: 0 22px;
+            height: 40px;
+            line-height: 40px;
+        }
+        .description-box {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 14px 16px;
+            border-left: 3px solid #7e57c2;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #37474f;
+        }
+    </style>
+</head>
+
+<body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns"
+      data-open="click" data-menu="vertical-dark-menu" data-col="2-columns">
+
+    <%- include('_layouts/sidenavbar') %>
+
+    <div id="main">
+        <div class="row">
+            <!-- Breadcrumbs -->
+            <div class="pt-1 pb-0" id="breadcrumbs-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <h6 class="breadcrumbs-title"><span>View Slide</span></h6>
+                        </div>
+                        <div class="col s12 m6 right-align-md">
+                            <ol class="breadcrumbs mb-0">
+                                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="/admin/onboarding">Onboarding Slides</a></li>
+                                <li class="breadcrumb-item active">View</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12">
+                <div class="container">
+                    <div class="section">
+                        <div class="card slide-view-card">
+                            <div class="card-content" style="padding: 28px 32px;">
+
+                                <%- include('messages', { messages: messages }) %>
+
+                                <!-- Header -->
+                                <div class="row" style="margin-bottom: 24px;">
+                                    <div class="col s12">
+                                        <h5 style="margin: 0 0 6px 0; font-weight: 600; color: #263238;">
+                                            <%= slide.title %>
+                                        </h5>
+                                        <span class="status-badge <%= slide.isActive ? 'status-active' : 'status-inactive' %>">
+                                            <%= slide.isActive ? 'Active' : 'Inactive' %>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Image Column -->
+                                    <div class="col s12 m4">
+                                        <div class="slide-image-wrapper">
+                                            <% if (slide.image) { %>
+                                                <img src="<%= slide.image %>" alt="<%= slide.title %>">
+                                            <% } else { %>
+                                                <div class="center-align grey-text" style="padding: 40px 0;">
+                                                    <i class="material-icons" style="font-size: 48px; opacity: 0.4;">image</i>
+                                                    <p style="margin-top: 8px; font-size: 14px;">No image uploaded</p>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <!-- Details Column -->
+                                    <div class="col s12 m8" style="padding-left: 28px;">
+                                        <div class="row">
+                                            <div class="col s6">
+                                                <div class="info-label">Order</div>
+                                                <div class="info-value"><%= slide.order %></div>
+                                            </div>
+                                            <div class="col s6">
+                                                <div class="info-label">Created</div>
+                                                <div class="info-value">
+                                                    <%= slide.createdAt ? new Date(slide.createdAt).toLocaleString('en-IN') : '-' %>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="info-label">Title</div>
+                                        <div class="info-value"><%= slide.title %></div>
+
+                                        <div class="info-label">Description</div>
+                                        <div class="description-box">
+                                            <%= slide.description || '—' %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <a href="/admin/onboarding" class="btn grey lighten-1 waves-effect">
+                                        <i class="material-icons left" style="font-size: 18px;">arrow_back</i>
+                                        Back
+                                    </a>
+                                    <a href="/admin/onboarding/edit/<%= slide._id %>" class="btn purple waves-effect waves-light">
+                                        <i class="material-icons left" style="font-size: 18px;">edit</i>
+                                        Edit Slide
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('_layouts/commonJs') %>
+</body>
+</html>

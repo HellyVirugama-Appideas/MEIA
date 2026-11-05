@@ -113,6 +113,12 @@
                                                                             <%= c.isActive ? 'Yes' : 'No' %>
                                                                         </span></td>
                                                                     <td class="actions-column">
+                                                                        <a href="/admin/content/tarot/view/<%= c._id %>"
+                                                                            class="waves-effect waves-light"
+                                                                            title="View">
+                                                                            <i class="material-icons">visibility</i>
+                                                                        </a>
+                                                                        &nbsp;&nbsp;
                                                                         <a href="/admin/content/tarot/edit/<%= c._id %>"
                                                                             class="waves-effect waves-light accent-2 btn-edit"
                                                                             title="Edit">
